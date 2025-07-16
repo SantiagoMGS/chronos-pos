@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../prisma-tenant-base/tenant-database-client-types"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("TENANT_BASE_DATABASE_URL")
+}
+
+model TenantMigration {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("tenant_migration")
+}
+
+model Application {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @unique @map("name")
+  description String? @map("description")
+  icon        String  @map("icon")
+  path        String  @unique @map("path")
+
+  resources Resource[]
+
+  @@map("application")
+}
+
+model Resource {
+  id            String  @id @default(uuid()) @db.Uuid
+  name          String  @unique @map("name")
+  description   String? @map("description")
+  icon          String  @map("icon")
+  path          String  @unique @map("path")
+  applicationId String? @map("application_id") @db.Uuid
+  parentId      String? @map("parent_id") @db.Uuid
+
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  parent      Resource?    @relation("ParentResource", fields: [parentId], references: [id], onDelete: Restrict)
+  children    Resource[]   @relation("ParentResource")
+  actions     Action[]
+
+  @@unique([name, applicationId])
+  @@unique([name, parentId])
+  @@map("resource")
+}
+
+model Action {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @unique @map("name")
+  description String? @map("description")
+  resourceId  String  @map("resource_id") @db.Uuid
+
+  resource    Resource     @relation(fields: [resourceId], references: [id], onDelete: Restrict)
+  roleActions RoleAction[]
+
+  @@map("action")
+}
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @map("name")
+  description String?  @map("description")
+  createdAt   DateTime @default(now()) @map("created_at")
+  isActive    Boolean  @default(true) @map("is_active")
+
+  roleActions RoleAction[]
+  userRoles   UserRole[]
+
+  @@map("role")
+}
+
+model RoleAction {
+  roleId   String @map("role_id") @db.Uuid
+  actionId String @map("action_id") @db.Uuid
+
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  action Action @relation(fields: [actionId], references: [id], onDelete: Restrict)
+
+  @@id([roleId, actionId])
+  @@map("role_action")
+}
+
+model UserRole {
+  userId   String  @map("user_id") @db.Uuid
+  roleId   String  @map("role_id") @db.Uuid
+  isActive Boolean @default(true) @map("is_active")
+
+  role Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@id([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_role")
+}
+
+model UserInfo {
+  userId         String @map("user_id") @db.Uuid
+  name           String @map("name")
+  documentNumber String @map("document_number")
+  documentTypeId String @map("document_type_id") @db.Uuid
+
+  documentType DocumentType @relation(fields: [documentTypeId], references: [id], onDelete: Restrict)
+
+  @@id([userId])
+  @@map("user_info")
+}
+
+model DocumentType {
+  id       String  @id @default(uuid()) @db.Uuid
+  name     String  @unique @map("name")
+  code     String  @unique @map("code")
+  isActive Boolean @default(true) @map("is_active")
+
+  userInfo UserInfo[]
+
+  @@unique([name, code])
+  @@map("document_type")
+}
+
+model Country {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @unique @map("name")
+
+  departments Department[]
+
+  @@map("country")
+}
+
+model Department {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String  @unique @map("name")
+  daneCode  String  @unique @map("dane_code")
+  countryId String  @map("country_id") @db.Uuid
+  isActive  Boolean @default(true) @map("is_active")
+
+  cities  City[]
+  country Country @relation(fields: [countryId], references: [id], onDelete: Restrict)
+
+  @@index([name])
+  @@map("department")
+}
+
+model City {
+  id           String  @id @default(uuid()) @db.Uuid
+  name         String  @map("name")
+  daneCode     String  @map("dane_code")
+  departmentId String  @map("department_id") @db.Uuid
+  isActive     Boolean @default(true) @map("is_active")
+
+  department Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@unique([name, daneCode, departmentId])
+  @@index([name])
+  @@map("city")
+}

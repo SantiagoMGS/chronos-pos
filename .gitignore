@@ -2,6 +2,10 @@
 /dist
 /node_modules
 /build
+/postgres
+/generated
+/prisma-principal/principal-database-client-types
+/prisma-tenant-base/tenant-database-client-types
 
 # Logs
 logs
