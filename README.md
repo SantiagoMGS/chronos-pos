@@ -5,22 +5,29 @@ Backend desarrollado con NestJS para el sistema Chrono-POS, implementando arquit
 ## 🚀 Tecnologías Utilizadas
 
 - **NestJS** - Framework de Node.js
+
 - **TypeScript** - Lenguaje de programación tipado
+
 - **Prisma** - ORM para base de datos
+
 - **PostgreSQL** - Base de datos relacional
-- **Redis** - Cache y sesiones
+
 - **JWT** - Autenticación y autorización
+
 - **Docker** - Contenedorización
+
 - **Swagger** - Documentación de API
-- **Azure Storage** - Almacenamiento en la nube
 
 ## 📋 Prerrequisitos
 
 Asegúrate de tener instalado:
 
 - [Node.js](https://nodejs.org/) (v18 o superior)
+
 - [npm](https://www.npmjs.com/)
+
 - [Docker](https://www.docker.com/)
+
 - [Docker Compose](https://docs.docker.com/compose/)
 
 ## 🛠️ Configuración e Instalación
@@ -28,14 +35,19 @@ Asegúrate de tener instalado:
 ### 1. Clonar el proyecto
 
 ```bash
+
 git clone [URL_DEL_REPOSITORIO]
+
 cd backend-chronos-pos
+
 ```
 
 ### 2. Instalar dependencias
 
 ```bash
+
 npm install
+
 ```
 
 ### 3. Configurar variables de entorno
@@ -43,7 +55,9 @@ npm install
 Copia el archivo de template y configura las variables de entorno:
 
 ```bash
+
 cp .env.template .env
+
 ```
 
 Edita el archivo `.env` con tus configuraciones específicas.
@@ -53,13 +67,19 @@ Edita el archivo `.env` con tus configuraciones específicas.
 Levanta los servicios de base de datos y Redis:
 
 ```bash
+
 docker-compose up -d
+
 ```
 
 > **Nota:** Si necesitas cambiar el puerto de PostgreSQL, modifica las siguientes variables en tu `.env`:
+
 >
+
 > - `DB_PORT`
+
 > - `PRINCIPAL_DATABASE_URL`
+
 > - `TENANT_BASE_DATABASE_URL`
 
 ### 5. Ejecutar migraciones
@@ -67,7 +87,9 @@ docker-compose up -d
 Aplica las migraciones a las bases de datos:
 
 ```bash
+
 npm run deploy
+
 ```
 
 ### 6. Generar tipos de Prisma
@@ -75,7 +97,9 @@ npm run deploy
 Genera los tipos de TypeScript para Prisma:
 
 ```bash
+
 npm run generate
+
 ```
 
 ### 7. Sincronizar tenants
@@ -83,7 +107,9 @@ npm run generate
 Sincroniza los tenants con respecto a la base de datos base:
 
 ```bash
+
 npm run sync-tenants
+
 ```
 
 ### 8. Ejecutar seeds
@@ -91,11 +117,17 @@ npm run sync-tenants
 Ejecuta los seeds para cargar la información base:
 
 ```bash
+
 # Seed para la base de datos principal
+
 npm run seed:principal
 
+
+
 # Seed para la base de datos de tenants
+
 npm run seed:tenant
+
 ```
 
 ### 9. Iniciar el servidor
@@ -103,7 +135,9 @@ npm run seed:tenant
 Ejecuta el proyecto en modo desarrollo:
 
 ```bash
+
 npm run start:dev
+
 ```
 
 ¡Listo! El servidor estará ejecutándose en `http://localhost:3000`
@@ -111,28 +145,51 @@ npm run start:dev
 ## 📝 Scripts Disponibles
 
 ```bash
+
 # Desarrollo
-npm run start:dev          # Inicia el servidor en modo desarrollo
-npm run start:debug        # Inicia el servidor en modo debug
+
+npm run start:dev          # Inicia el servidor en modo desarrollo
+
+npm run start:debug        # Inicia el servidor en modo debug
+
+
 
 # Producción
-npm run build              # Construye la aplicación
-npm run start:prod         # Inicia el servidor en modo producción
+
+npm run build              # Construye la aplicación
+
+npm run start:prod         # Inicia el servidor en modo producción
+
+
 
 # Base de datos
-npm run generate           # Genera tipos de Prisma
-npm run migrate           # Ejecuta migraciones en desarrollo
-npm run deploy            # Ejecuta migraciones en producción
-npm run sync-tenants      # Sincroniza las bases de datos de tenants
+
+npm run generate           # Genera tipos de Prisma
+
+npm run migrate           # Ejecuta migraciones en desarrollo
+
+npm run deploy            # Ejecuta migraciones en producción
+
+npm run sync-tenants      # Sincroniza las bases de datos de tenants
+
+
 
 # Seeds
-npm run seed:principal    # Ejecuta seeds de la DB principal
-npm run seed:tenant       # Ejecuta seeds de la DB de tenants
+
+npm run seed:principal    # Ejecuta seeds de la DB principal
+
+npm run seed:tenant       # Ejecuta seeds de la DB de tenants
+
+
 
 # Calidad de código
-npm run lint              # Ejecuta el linter
-npm run format            # Formatea el código con Prettier
-npm run test              # Ejecuta las pruebas
+
+npm run lint              # Ejecuta el linter
+
+npm run format            # Formatea el código con Prettier
+
+npm run test              # Ejecuta las pruebas
+
 ```
 
 ## 📚 Documentación API
@@ -140,5 +197,7 @@ npm run test              # Ejecuta las pruebas
 Una vez iniciado el proyecto, puedes acceder a la documentación Swagger en:
 
 ```
+
 http://localhost:8443/api/docs
+
 ```
