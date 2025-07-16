@@ -198,6 +198,6 @@ Una vez iniciado el proyecto, puedes acceder a la documentación Swagger en:
 
 ```
 
-http://localhost:8443/api/docs
+http://localhost:3000/api/docs
 
 ```
