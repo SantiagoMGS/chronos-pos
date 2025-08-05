@@ -1,5 +1,5 @@
 import { PrismaClient } from '../prisma-principal/principal-database-client-types';
-import { seedCompanies, seedUsers } from './seed/';
+import { seedCompanies, seedUsers, seedStatus } from './seed/';
 import { SeedLogger } from './utils/seed-logger';
 
 const prisma = new PrismaClient({
@@ -13,6 +13,7 @@ const prisma = new PrismaClient({
 async function main() {
   SeedLogger.start('Iniciando seed de la base de datos principal...');
 
+  await seedStatus(prisma);
   await seedCompanies(prisma);
   await seedUsers(prisma);
 

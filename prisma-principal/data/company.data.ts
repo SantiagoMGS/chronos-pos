@@ -5,6 +5,11 @@ export const companyData: Prisma.CompanyCreateInput[] = [
     id: '550e8400-e29b-41d4-a716-446655440001',
     name: 'Chronosoft',
     dbName: 'chronosoft',
+    status: {
+      connect: {
+        name: 'ACTIVE',
+      },
+    },
     companyBranding: {
       create: {
         logo: 'https://www.chronosoft.com/wp-content/uploads/2023/01/Borealis-Logo-Black.png',
