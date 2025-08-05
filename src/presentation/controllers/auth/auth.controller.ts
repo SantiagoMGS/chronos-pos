@@ -27,17 +27,6 @@ export class AuthController {
     type: LoginDto,
     description: 'Credenciales del usuario para autenticación.',
   })
-  @ApiOperation({ summary: 'Iniciar sesión' })
-  @ApiOkResponse({
-    description: 'Usuario autenticado correctamente',
-    ...getResponseSchema(LoginResponseDto),
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Credenciales incorrectas',
-  })
-  @CustomResponse({
-    successMessage: 'Usuario autenticado correctamente',
-  })
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return await this.loginUseCase.execute(loginDto);
   }

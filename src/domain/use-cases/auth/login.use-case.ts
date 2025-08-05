@@ -15,7 +15,7 @@ export class LoginUseCase {
     private readonly tokenService: TokenService,
   ) {}
 
-  async execute(loginData: LoginDto): Promise<LoginResponseDto> {
+  async execute(loginData: LoginDto): Promise<any> {
     const user = await this.userFinderService.findUserByEmail(loginData.email);
 
     const currentPassword = user.userCredentials[0];
@@ -24,6 +24,9 @@ export class LoginUseCase {
       sub: user.id,
     };
     const tokens = this.tokenService.generateTokens(payload);
-    return user;
+    return {
+      user,
+      tokens,
+    };
   }
 }

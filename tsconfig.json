@@ -27,5 +27,6 @@
       "@prisma-principal/*": ["prisma-principal/*"],
       "@prisma-tenant-base/*": ["prisma-tenant-base/*"]
     }
-  }
+  },
+  "include": ["src/**/*"]
 }
