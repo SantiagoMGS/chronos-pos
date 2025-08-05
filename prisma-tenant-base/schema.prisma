@@ -114,7 +114,8 @@ model DocumentType {
   code     String  @unique @map("code")
   isActive Boolean @default(true) @map("is_active")
 
-  userInfo UserInfo[]
+  customers Customer[]
+  userInfo  UserInfo[]
 
   @@unique([name, code])
   @@map("document_type")
@@ -155,4 +156,42 @@ model City {
   @@unique([name, daneCode, departmentId])
   @@index([name])
   @@map("city")
+}
+
+model ItemType {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @unique @map("name")
+  description String? @map("description")
+  isActive    Boolean @default(true) @map("is_active")
+
+  items Item[]
+
+  @@map("item_type")
+}
+
+model Item {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @map("name")
+  description String? @map("description")
+  itemTypeId  String  @map("item_type_id") @db.Uuid
+  isActive    Boolean @default(true) @map("is_active")
+
+  itemType ItemType @relation(fields: [itemTypeId], references: [id], onDelete: Restrict)
+
+  @@map("item")
+}
+
+model Customer {
+  id             String @id @default(uuid()) @db.Uuid
+  name           String @map("name")
+  documentTypeId String @map("document_type_id") @db.Uuid
+  documentNumber String @map("document_number")
+
+  email       String  @map("email")
+  phoneNumber String  @map("phone_number")
+  isActive    Boolean @default(true) @map("is_active")
+
+  documentType DocumentType @relation(fields: [documentTypeId], references: [id], onDelete: Restrict)
+
+  @@map("customer")
 }

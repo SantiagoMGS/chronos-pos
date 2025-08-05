@@ -119,6 +119,40 @@ CREATE TABLE "city" (
     CONSTRAINT "city_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "item_type" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT "item_type_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "item" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "item_type_id" UUID NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT "item_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "customer" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "document_type_id" UUID NOT NULL,
+    "document_number" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "phone_number" TEXT NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT "customer_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "application_name_key" ON "application"("name");
 
@@ -173,6 +207,9 @@ CREATE INDEX "city_name_idx" ON "city"("name");
 -- CreateIndex
 CREATE UNIQUE INDEX "city_name_dane_code_department_id_key" ON "city"("name", "dane_code", "department_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "item_type_name_key" ON "item_type"("name");
+
 -- AddForeignKey
 ALTER TABLE "resource" ADD CONSTRAINT "resource_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -199,3 +236,9 @@ ALTER TABLE "department" ADD CONSTRAINT "department_country_id_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "city" ADD CONSTRAINT "city_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "item" ADD CONSTRAINT "item_item_type_id_fkey" FOREIGN KEY ("item_type_id") REFERENCES "item_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "customer" ADD CONSTRAINT "customer_document_type_id_fkey" FOREIGN KEY ("document_type_id") REFERENCES "document_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

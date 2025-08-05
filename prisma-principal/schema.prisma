@@ -41,7 +41,6 @@ model UserCompany {
   company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
   @@id([userId, companyId])
-  @@unique([userId, companyId])
   @@map("user_company")
 }
 
@@ -63,26 +62,41 @@ model Company {
   id        String   @id @default(uuid()) @db.Uuid
   name      String   @unique @map("name")
   dbName    String   @unique @map("db_name")
+  statusId  String   @map("status_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
   companyUsers    UserCompany[]
   companyBranding CompanyBranding[]
   paymentInfo     PaymentInfo[]
+  status          Status            @relation(fields: [statusId], references: [id], onDelete: Restrict)
 
   @@map("company")
 }
 
 model PaymentInfo {
   id          String   @id @default(uuid()) @db.Uuid
+  companyId   String   @map("company_id") @db.Uuid
   firstName   String   @map("first_name")
   lastName    String   @map("last_name")
   phoneNumber String   @map("phone_number")
   address     String   @map("address")
   description String   @map("description")
-  companyId   String   @map("company_id") @db.Uuid
+  statusId    String   @map("status_id") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  status  Status  @relation(fields: [statusId], references: [id], onDelete: Restrict)
 
   @@map("payment_info")
+}
+
+model Status {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique @map("name")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company     Company[]
+  PaymentInfo PaymentInfo[]
+
+  @@map("status")
 }
