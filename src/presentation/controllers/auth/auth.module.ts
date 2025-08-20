@@ -5,6 +5,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthController } from './auth.controller';
 import { LoginUseCase } from '@domain/use-cases/auth/login.use-case';
 import { SetCompanyUseCase } from '../../../domain/use-cases/auth/set-company.use-case';
+import { GetPermissionsByCompanyUseCase } from '../../../domain/use-cases/auth/get-permissions-by-company.use-case';
 import { TokenService } from '@application/services/auth/token.service';
 import { BcryptService } from '@application/services/auth/bcrypt.service';
 import { UserFinderService } from '@application/services/user/user-finder.service';
@@ -29,6 +30,7 @@ import { envs } from '@core/config/envs';
   providers: [
     LoginUseCase,
     SetCompanyUseCase,
+    GetPermissionsByCompanyUseCase,
     TokenService,
     BcryptService,
     UserFinderService,
