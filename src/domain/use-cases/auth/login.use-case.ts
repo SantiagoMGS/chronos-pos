@@ -15,18 +15,33 @@ export class LoginUseCase {
     private readonly tokenService: TokenService,
   ) {}
 
-  async execute(loginData: LoginDto): Promise<any> {
-    const user = await this.userFinderService.findUserByEmail(loginData.email);
+  async execute(loginData: LoginDto, request: Request): Promise<LoginResponseDto> {
+    const user = await this.userFinderService.findUserByEmailWithCompanies(loginData.email);
 
     const currentPassword = user.userCredentials[0];
     await this.bcryptService.comparePassword(loginData.password, currentPassword.hashedPassword);
+
     const payload: TokenPayload = {
       sub: user.id,
     };
     const tokens = this.tokenService.generateTokens(payload);
+
     return {
-      user,
+      id: user.id,
       tokens,
+      companies: user.userCompanies.map((uc) => ({
+        id: uc.company.id,
+        name: uc.company.name,
+        shortName: uc.company.shortName || '',
+        branding: uc.company.companyBranding?.[0]
+          ? {
+              logo: uc.company.companyBranding[0].logo,
+              primaryColor: uc.company.companyBranding[0].primaryColor,
+              secondaryColor: uc.company.companyBranding[0].secondaryColor,
+              tertiaryColor: uc.company.companyBranding[0].tertiaryColor,
+            }
+          : null,
+      })),
     };
   }
 }

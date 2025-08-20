@@ -1,0 +1,36 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { TOKEN_MESSAGE } from '@shared/constants/token-message';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { envs } from '@core/config/envs';
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw Error('JWT_SECRET no está configurado en las variables de entorno');
+    }
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: envs.jwtSecret,
+      passReqToCallback: true,
+    });
+  }
+
+  async validate(req: any, payload: any) {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+    if (!token) {
+      throw new UnauthorizedException(TOKEN_MESSAGE.TOKEN_NOT_FOUND);
+    }
+
+    // Retornamos los datos del payload, manejando campos opcionales
+    return {
+      userId: payload.sub,
+      roleId: payload.roleId || null,
+      companyDbName: payload.companyDbName || null,
+      companyId: payload.companyId || null,
+    };
+  }
+}

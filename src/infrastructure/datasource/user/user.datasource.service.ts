@@ -29,7 +29,45 @@ export class UserDataSourceService implements UserRepository {
     return user || null;
   }
 
+  async getUserByEmailWithCompanies(email: string): Promise<any> {
+    const user = await this.prismaPrincipal.client.user.findFirst({
+      where: { email },
+      include: {
+        userCompanies: {
+          where: { isActive: true },
+          include: {
+            company: {
+              include: {
+                companyBranding: true,
+              },
+            },
+          },
+        },
+        userCredentials: {
+          where: { isActive: true },
+        },
+      },
+    });
+
+    return user || null;
+  }
+
   async getUserById(id: string): Promise<any> {
-    return;
+    const user = await this.prismaPrincipal.client.user.findFirst({
+      where: { id },
+      include: {
+        userCompanies: {
+          where: { isActive: true },
+          include: {
+            company: true,
+          },
+        },
+        userCredentials: {
+          where: { isActive: true },
+        },
+      },
+    });
+
+    return user || null;
   }
 }

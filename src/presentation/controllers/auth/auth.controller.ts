@@ -1,4 +1,4 @@
-import { Controller, Post, HttpCode, HttpStatus, Body, Req } from '@nestjs/common';
+import { Controller, Post, HttpCode, HttpStatus, Body, Req, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -8,18 +8,25 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { LoginDto } from './dtos/login.dto';
+import { SetCompanyDto, SetCompanyResponseDto } from './dtos/set-company.dto';
 import { getResponseSchema } from 'src/shared/dtos/api-response.dto';
 import { CustomResponse } from 'src/core/decorators/custom.response.decorator';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginUseCase } from '@domain/use-cases/auth/login.use-case';
+import { SetCompanyUseCase } from '../../../domain/use-cases/auth/set-company.use-case';
+import { JwtAuthGuard } from '../../../infrastructure/guards/jwt-auth.guard';
 
 @Controller('auth')
 @ApiTags('Autenticación')
 @ApiBearerAuth()
 @ApiExtraModels()
 export class AuthController {
-  constructor(private readonly loginUseCase: LoginUseCase) {}
+  constructor(
+    private readonly loginUseCase: LoginUseCase,
+    private readonly setCompanyUseCase: SetCompanyUseCase,
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -27,7 +34,38 @@ export class AuthController {
     type: LoginDto,
     description: 'Credenciales del usuario para autenticación.',
   })
-  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
-    return await this.loginUseCase.execute(loginDto);
+  @ApiOperation({ summary: 'Iniciar sesión' })
+  @ApiOkResponse({
+    description: 'Usuario autenticado correctamente',
+    ...getResponseSchema(LoginResponseDto),
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Credenciales incorrectas',
+  })
+  @CustomResponse({
+    successMessage: 'Usuario autenticado correctamente',
+  })
+  async login(@Body() loginDto: LoginDto, @Req() req: Request): Promise<LoginResponseDto> {
+    return await this.loginUseCase.execute(loginDto, req);
+  }
+
+  @Post('set-company')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Establecer compañía activa para el usuario' })
+  @ApiBearerAuth()
+  @ApiBody({
+    type: SetCompanyDto,
+    description: 'Datos para establecer la compañía del usuario',
+  })
+  @ApiOkResponse({
+    description: 'Compañía establecida correctamente',
+    ...getResponseSchema(SetCompanyResponseDto),
+  })
+  @CustomResponse({
+    successMessage: 'Compañía establecida correctamente',
+  })
+  async setCompany(@Body() setCompanyDto: SetCompanyDto, @Req() req: Request): Promise<SetCompanyResponseDto> {
+    return this.setCompanyUseCase.execute(setCompanyDto.companyId, req);
   }
 }
