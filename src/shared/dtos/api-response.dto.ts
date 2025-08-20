@@ -46,7 +46,7 @@ export class ApiResponseDto<T> {
  * @param dataDto El DTO que representa la estructura de datos
  * @returns Un objeto de configuración para usar con @ApiResponse
  */
-export function getResponseSchema(dataDto: any) {
+export function getResponseSchema(dataDto: { name: string }) {
   return {
     schema: {
       allOf: [
@@ -68,7 +68,7 @@ export function getResponseSchema(dataDto: any) {
  * @param itemDto El DTO que representa cada elemento del array
  * @returns Un objeto de configuración para usar con @ApiResponse
  */
-export function getArrayResponseSchema(itemDto: any) {
+export function getArrayResponseSchema(itemDto: { name: string }) {
   return {
     schema: {
       allOf: [
@@ -91,7 +91,7 @@ export function getArrayResponseSchema(itemDto: any) {
  * @param itemSchema El schema que define cada elemento del array (tipo primitivo)
  * @returns Un objeto de configuración para usar con @ApiResponse
  */
-export function getPrimitiveArrayResponseSchema(itemSchema: any) {
+export function getPrimitiveArrayResponseSchema(itemSchema: Record<string, unknown>) {
   return {
     schema: {
       allOf: [

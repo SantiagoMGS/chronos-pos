@@ -1,4 +1,14 @@
-import { Controller, Post, HttpCode, HttpStatus, Body, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Body,
+  Req,
+  UseGuards,
+  UseInterceptors,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -68,6 +78,11 @@ export class AuthController {
     successMessage: 'Compañía establecida correctamente',
   })
   async setCompany(@Body() setCompanyDto: SetCompanyDto, @Req() req: Request): Promise<SetCompanyResponseDto> {
-    return this.setCompanyUseCase.execute(setCompanyDto.companyId, req);
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Usuario no autenticado');
+    }
+    const tokens = await this.setCompanyUseCase.execute({ userId, companyId: setCompanyDto.companyId });
+    return tokens;
   }
 }

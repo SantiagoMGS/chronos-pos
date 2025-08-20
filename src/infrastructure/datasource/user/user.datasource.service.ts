@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrincipalPrismaService } from '@core/services/principal-prisma-client.service';
 import { UserRepository } from '@domain/repositories/user/user.repository';
+import { User } from '@domain/entities/user.entity';
 
 @Injectable()
 export class UserDataSourceService implements UserRepository {
   constructor(private readonly prismaPrincipal: PrincipalPrismaService) {}
 
-  async getUserByEmail(email: string): Promise<any> {
+  async getUserByEmail(email: string): Promise<User | null> {
     const user = await this.prismaPrincipal.client.user.findFirst({
       where: { email },
       include: {
@@ -29,7 +30,7 @@ export class UserDataSourceService implements UserRepository {
     return user || null;
   }
 
-  async getUserByEmailWithCompanies(email: string): Promise<any> {
+  async getUserByEmailWithCompanies(email: string): Promise<User | null> {
     const user = await this.prismaPrincipal.client.user.findFirst({
       where: { email },
       include: {
@@ -52,7 +53,7 @@ export class UserDataSourceService implements UserRepository {
     return user || null;
   }
 
-  async getUserById(id: string): Promise<any> {
+  async getUserById(id: string): Promise<User | null> {
     const user = await this.prismaPrincipal.client.user.findFirst({
       where: { id },
       include: {

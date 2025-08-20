@@ -3,6 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { TOKEN_MESSAGE } from '@shared/constants/token-message';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { envs } from '@core/config/envs';
+import { Request } from 'express';
+import { TokenPayload } from '@application/services/auth/interfaces/token-payload.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: any, payload: any) {
+  async validate(req: Request, payload: TokenPayload) {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     if (!token) {
       throw new UnauthorizedException(TOKEN_MESSAGE.TOKEN_NOT_FOUND);

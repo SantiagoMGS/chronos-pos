@@ -1,12 +1,13 @@
 import { UserRepository } from '@domain/repositories/user/user.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AUTH_MESSAGE } from '@shared/constants/auth-message';
+import { User } from '@domain/entities/user.entity';
 
 @Injectable()
 export class UserFinderService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async findUserByEmail(email: string): Promise<any> {
+  async findUserByEmail(email: string): Promise<User> {
     const user = await this.userRepository.getUserByEmail(email);
 
     if (!user) {
@@ -20,7 +21,7 @@ export class UserFinderService {
     return user;
   }
 
-  async findUserByEmailWithCompanies(email: string): Promise<any> {
+  async findUserByEmailWithCompanies(email: string): Promise<User> {
     const user = await this.userRepository.getUserByEmailWithCompanies(email);
 
     if (!user) {
@@ -34,7 +35,7 @@ export class UserFinderService {
     return user;
   }
 
-  async findUserById(userId: string): Promise<any> {
+  async findUserById(userId: string): Promise<User> {
     const user = await this.userRepository.getUserById(userId);
     if (!user) {
       throw new NotFoundException(AUTH_MESSAGE.USER_NOT_FOUND);

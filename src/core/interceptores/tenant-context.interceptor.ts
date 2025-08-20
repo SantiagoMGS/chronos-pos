@@ -11,7 +11,7 @@ export class TenantContextInterceptor implements NestInterceptor {
     setRequestContextProvider(this.contextService);
   }
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 

@@ -10,6 +10,8 @@ import { BcryptService } from '@application/services/auth/bcrypt.service';
 import { UserFinderService } from '@application/services/user/user-finder.service';
 import { UserRepository } from '@domain/repositories/user/user.repository';
 import { UserDataSourceService } from '@infrastructure/datasource/user/user.datasource.service';
+import { CompanyAccessRepository } from '@domain/repositories/company/company-access.repository';
+import { CompanyAccessDataSourceService } from '@infrastructure/datasource/company/company-access.datasource.service';
 import { PrincipalPrismaService } from '@core/services/principal-prisma-client.service';
 import { JwtStrategy } from '@infrastructure/strategies/jwt.strategy';
 import { ResponseInterceptor } from '../../../core/interceptores/response.interceptor';
@@ -37,6 +39,10 @@ import { envs } from '@core/config/envs';
     {
       provide: UserRepository,
       useClass: UserDataSourceService,
+    },
+    {
+      provide: CompanyAccessRepository,
+      useClass: CompanyAccessDataSourceService,
     },
   ],
   exports: [TokenService, BcryptService],

@@ -8,7 +8,7 @@ declare global {
         roleId?: string | null;
         companyDbName?: string | null;
         companyId?: string | null;
-        [key: string]: any;
+        [key: string]: unknown;
       };
     }
   }

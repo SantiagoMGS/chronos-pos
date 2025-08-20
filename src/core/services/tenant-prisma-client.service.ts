@@ -1,9 +1,9 @@
 import { Injectable, Inject, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
-import { PrismaClient } from '@prisma-tenant-base/tenant-database-client-types';
+import { PrismaClient, Prisma } from '@prisma-tenant-base/tenant-database-client-types';
 
-const getTenantPrisma = (companyDbName: string, request?: Request, middleware?: any) => {
+const getTenantPrisma = (companyDbName: string, request?: Request, middleware?: Prisma.Middleware) => {
   if (!companyDbName) {
     throw new Error('Database name (companyDbName) is required');
   }
@@ -30,14 +30,14 @@ const getTenantPrisma = (companyDbName: string, request?: Request, middleware?: 
 
 const globalForTenantClients = global as unknown as {
   tenantPrismaClients: Map<string, { client: ReturnType<typeof getTenantPrisma>; request?: Request }>;
-  auditMiddleware: any;
+  auditMiddleware: Prisma.Middleware | undefined;
 };
 
 export const tenantPrismaClients =
   globalForTenantClients.tenantPrismaClients ||
   new Map<string, { client: ReturnType<typeof getTenantPrisma>; request?: Request }>();
 
-export const setAuditMiddleware = (middleware: any) => {
+export const setAuditMiddleware = (middleware: Prisma.Middleware) => {
   globalForTenantClients.auditMiddleware = middleware;
 };
 
@@ -61,7 +61,7 @@ export class TenantPrismaService {
 
   get client(): PrismaClient {
     if (!this._client) {
-      const user = this.request.user as any;
+      const user = this.request.user;
       if (!user?.companyDbName) {
         throw new Error(
           'No se encontró información de la empresa en el token. Asegúrate de estar autenticado y haber seleccionado una empresa.',

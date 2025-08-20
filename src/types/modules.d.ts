@@ -1,11 +1,13 @@
 declare module 'express' {
   export interface Request {
     user?: {
-      id: string;
+      userId: string;
+      id?: string;
       email?: string;
-      companyDbName: string;
-      companyId: string;
-      [key: string]: any;
+      roleId?: string | null;
+      companyDbName?: string | null;
+      companyId?: string | null;
+      [key: string]: unknown;
     };
   }
 }
