@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { Reflector } from '@nestjs/core';
 import { AuthController } from './auth.controller';
 import { LoginUseCase } from '@domain/use-cases/auth/login.use-case';
 import { SetCompanyUseCase } from '../../../domain/use-cases/auth/set-company.use-case';
@@ -11,6 +12,7 @@ import { UserRepository } from '@domain/repositories/user/user.repository';
 import { UserDataSourceService } from '@infrastructure/datasource/user/user.datasource.service';
 import { PrincipalPrismaService } from '@core/services/principal-prisma-client.service';
 import { JwtStrategy } from '@infrastructure/strategies/jwt.strategy';
+import { ResponseInterceptor } from '../../../core/interceptores/response.interceptor';
 import { envs } from '@core/config/envs';
 
 @Module({
@@ -30,6 +32,8 @@ import { envs } from '@core/config/envs';
     UserFinderService,
     PrincipalPrismaService,
     JwtStrategy,
+    ResponseInterceptor,
+    Reflector,
     {
       provide: UserRepository,
       useClass: UserDataSourceService,

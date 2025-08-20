@@ -1,4 +1,4 @@
-import { Controller, Post, HttpCode, HttpStatus, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, HttpCode, HttpStatus, Body, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -11,17 +11,19 @@ import {
 import { Request } from 'express';
 import { LoginDto } from './dtos/login.dto';
 import { SetCompanyDto, SetCompanyResponseDto } from './dtos/set-company.dto';
-import { getResponseSchema } from 'src/shared/dtos/api-response.dto';
+import { getResponseSchema, ApiResponseDto } from 'src/shared/dtos/api-response.dto';
 import { CustomResponse } from 'src/core/decorators/custom.response.decorator';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { LoginUseCase } from '@domain/use-cases/auth/login.use-case';
 import { SetCompanyUseCase } from '../../../domain/use-cases/auth/set-company.use-case';
 import { JwtAuthGuard } from '../../../infrastructure/guards/jwt-auth.guard';
+import { ResponseInterceptor } from '../../../core/interceptores/response.interceptor';
 
 @Controller('auth')
 @ApiTags('Autenticación')
 @ApiBearerAuth()
-@ApiExtraModels()
+@ApiExtraModels(ApiResponseDto, LoginResponseDto, SetCompanyResponseDto)
+@UseInterceptors(ResponseInterceptor)
 export class AuthController {
   constructor(
     private readonly loginUseCase: LoginUseCase,
