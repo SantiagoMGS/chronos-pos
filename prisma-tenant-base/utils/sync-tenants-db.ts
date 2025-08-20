@@ -1,5 +1,4 @@
 import { PrismaClient } from '../tenant-database-client-types';
-import { companyData } from '../../prisma-principal/data/company.data';
 import { SeedLogger } from './seed-logger';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,6 +9,11 @@ interface MigrationInfo {
   timestamp: string;
 }
 
+interface CompanyInfo {
+  name: string;
+  dbName: string;
+}
+
 export class TenantSyncManager {
   private migrationsPath: string;
 
@@ -17,16 +21,13 @@ export class TenantSyncManager {
     this.migrationsPath = path.join(__dirname, '..', 'migrations');
   }
 
-  /**
-   * Lee todas las migraciones disponibles del directorio
-   */
   private async readMigrations(): Promise<MigrationInfo[]> {
     try {
       const migrationDirs = fs
         .readdirSync(this.migrationsPath, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => dirent.name)
-        .sort(); // Ordena por timestamp
+        .sort();
 
       const migrations: MigrationInfo[] = [];
 
@@ -35,7 +36,7 @@ export class TenantSyncManager {
 
         if (fs.existsSync(migrationPath)) {
           const sql = fs.readFileSync(migrationPath, 'utf-8');
-          const timestamp = migrationDir.split('_')[0]; // Extrae el timestamp
+          const timestamp = migrationDir.split('_')[0];
 
           migrations.push({
             name: migrationDir,
@@ -53,9 +54,6 @@ export class TenantSyncManager {
     }
   }
 
-  /**
-   * Obtiene las migraciones ya aplicadas en una base de datos tenant
-   */
   private async getAppliedMigrations(prisma: PrismaClient): Promise<string[]> {
     try {
       const appliedMigrations = await prisma.tenantMigration.findMany({
@@ -65,18 +63,13 @@ export class TenantSyncManager {
 
       return appliedMigrations.map((migration) => migration.name);
     } catch (error) {
-      // Si la tabla no existe, retornamos array vacío
       const errorMessage = error instanceof Error ? error.message : String(error);
       SeedLogger.warn(`No se pudieron obtener migraciones aplicadas: ${errorMessage}`);
       return [];
     }
   }
 
-  /**
-   * Divide el SQL en comandos individuales
-   */
   private splitSqlCommands(sql: string): string[] {
-    // Remover comentarios de línea completa y limpiar el SQL
     const cleanedSql = sql
       .split('\n')
       .filter((line) => {
@@ -85,29 +78,22 @@ export class TenantSyncManager {
       })
       .join('\n');
 
-    // Dividir por punto y coma
     const commands = cleanedSql
       .split(';')
       .map((cmd) => cmd.trim())
       .filter((cmd) => {
-        // Filtrar comandos vacíos
         return cmd.length > 0 && cmd !== '';
       });
 
     return commands;
   }
 
-  /**
-   * Aplica una migración SQL a la base de datos (solo el SQL, sin registrar)
-   */
   private async applyMigrationSql(prisma: PrismaClient, migration: MigrationInfo): Promise<void> {
     try {
-      // Dividir el SQL en comandos individuales
       const sqlCommands = this.splitSqlCommands(migration.sql);
 
       SeedLogger.info(`🔄 Aplicando migración ${migration.name}...`);
 
-      // Ejecutar cada comando SQL individualmente
       for (const command of sqlCommands) {
         if (command.trim()) {
           try {
@@ -129,9 +115,6 @@ export class TenantSyncManager {
     }
   }
 
-  /**
-   * Registra una migración como aplicada en tenant_migration
-   */
   private async registerMigration(prisma: PrismaClient, migrationName: string): Promise<void> {
     try {
       await prisma.tenantMigration.create({
@@ -147,12 +130,12 @@ export class TenantSyncManager {
     }
   }
 
-  /**
-   * Crea una conexión administrativa para crear bases de datos
-   */
   private createAdminPrismaClient(): PrismaClient {
-    const port = process.env.DB_PORT || 5432;
-    const databaseUrl = `postgresql://postgres:postgres@localhost:${port}/postgres`;
+    const user = process.env.DB_USER || 'postgres';
+    const password = process.env.DB_PASS || 'postgres';
+    const host = process.env.DB_HOST || 'localhost';
+    const port = Number(process.env.DB_PORT) || 5432;
+    const databaseUrl = `postgresql://${user}:${password}@${host}:${port}/postgres`;
 
     return new PrismaClient({
       datasources: {
@@ -163,12 +146,12 @@ export class TenantSyncManager {
     });
   }
 
-  /**
-   * Crea una conexión a la base de datos tenant
-   */
   private createTenantPrismaClient(dbName: string): PrismaClient {
-    const port = process.env.DB_PORT || 5432;
-    const databaseUrl = `postgresql://postgres:postgres@localhost:${port}/${dbName}`;
+    const user = process.env.DB_USER || 'postgres';
+    const password = process.env.DB_PASS || 'postgres';
+    const host = process.env.DB_HOST || 'localhost';
+    const port = Number(process.env.DB_PORT) || 5432;
+    const databaseUrl = `postgresql://${user}:${password}@${host}:${port}/${dbName}`;
 
     return new PrismaClient({
       datasources: {
@@ -179,9 +162,6 @@ export class TenantSyncManager {
     });
   }
 
-  /**
-   * Verifica si una base de datos existe
-   */
   private async databaseExists(dbName: string): Promise<boolean> {
     const adminPrisma = this.createAdminPrismaClient();
 
@@ -202,9 +182,6 @@ export class TenantSyncManager {
     }
   }
 
-  /**
-   * Crea una base de datos tenant si no existe
-   */
   private async createDatabaseIfNotExists(dbName: string): Promise<void> {
     const exists = await this.databaseExists(dbName);
 
@@ -218,7 +195,6 @@ export class TenantSyncManager {
     const adminPrisma = this.createAdminPrismaClient();
 
     try {
-      // Crear la base de datos usando SQL sin comillas identificadoras
       await adminPrisma.$executeRawUnsafe(`CREATE DATABASE ${dbName};`);
       SeedLogger.success(`✅ Base de datos ${dbName} creada exitosamente`);
     } catch (error) {
@@ -230,28 +206,21 @@ export class TenantSyncManager {
     }
   }
 
-  /**
-   * Sincroniza una base de datos tenant específica
-   */
   private async syncTenantDatabase(companyName: string, dbName: string): Promise<void> {
     SeedLogger.info(`🔄 Sincronizando base de datos tenant: ${companyName} (${dbName})`, '🏢');
 
     try {
-      // Verificar y crear la base de datos si no existe
       await this.createDatabaseIfNotExists(dbName);
 
       const tenantPrisma = this.createTenantPrismaClient(dbName);
 
       try {
-        // Leer todas las migraciones disponibles
         const availableMigrations = await this.readMigrations();
         SeedLogger.info(`📁 Migraciones disponibles: ${availableMigrations.length}`);
 
-        // Obtener migraciones ya aplicadas
         const appliedMigrations = await this.getAppliedMigrations(tenantPrisma);
         SeedLogger.info(`✅ Migraciones ya aplicadas: ${appliedMigrations.length}`);
 
-        // Filtrar migraciones pendientes
         const pendingMigrations = availableMigrations.filter(
           (migration) => !appliedMigrations.includes(migration.name),
         );
@@ -264,13 +233,10 @@ export class TenantSyncManager {
         const migrationNames = pendingMigrations.map((m) => m.name).join(', ');
         SeedLogger.info(`🔄 Aplicando ${pendingMigrations.length} migraciones pendientes: ${migrationNames}`);
 
-        // Aplicar todas las migraciones SQL primero (sin registrar)
         for (const migration of pendingMigrations) {
           await this.applyMigrationSql(tenantPrisma, migration);
         }
 
-        // Solo después de que todas las migraciones se apliquen exitosamente,
-        // registrar cada una en la tabla tenant_migration
         SeedLogger.info('📝 Registrando migraciones aplicadas...');
         for (const migration of pendingMigrations) {
           await this.registerMigration(tenantPrisma, migration.name);
@@ -287,16 +253,19 @@ export class TenantSyncManager {
     }
   }
 
-  /**
-   * Sincroniza todas las bases de datos tenant
-   */
-  async syncAllTenants(): Promise<void> {
+  async syncSpecificTenant(companyName: string, dbName: string): Promise<void> {
+    SeedLogger.start(`🚀 Iniciando sincronización para tenant específico: ${companyName}`);
+    await this.syncTenantDatabase(companyName, dbName);
+    SeedLogger.complete('🎉 Sincronización completada exitosamente!');
+  }
+
+  async syncTenantList(companies: CompanyInfo[]): Promise<void> {
     SeedLogger.start('🚀 Iniciando sincronización de bases de datos tenant...');
 
     try {
-      SeedLogger.info(`🏢 Compañías a sincronizar: ${companyData.length}`);
+      SeedLogger.info(`🏢 Compañías a sincronizar: ${companies.length}`);
 
-      for (const company of companyData) {
+      for (const company of companies) {
         await this.syncTenantDatabase(company.name, company.dbName);
       }
 
@@ -309,13 +278,14 @@ export class TenantSyncManager {
   }
 }
 
-// Función principal para ejecutar el script
 async function main() {
   const syncManager = new TenantSyncManager();
-  await syncManager.syncAllTenants();
+
+  const companies: CompanyInfo[] = [{ name: 'Empresa Demo', dbName: 'demo_tenant' }];
+
+  await syncManager.syncTenantList(companies);
 }
 
-// Ejecutar si se llama directamente
 if (require.main === module) {
   main().catch((error) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
