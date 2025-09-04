@@ -12,15 +12,12 @@ import { TenantPrismaService } from '@core/services/tenant-prisma-client.service
 @Module({
   controllers: [ItemController],
   providers: [
-    // Core Services
     TenantPrismaService,
-    // Use Cases
     CreateItemUseCase,
     GetItemUseCase,
     GetAllItemsUseCase,
     UpdateItemUseCase,
     DeleteItemUseCase,
-    // Repository Implementation
     {
       provide: ItemRepository,
       useClass: ItemDataSourceService,
