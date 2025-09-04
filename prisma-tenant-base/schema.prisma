@@ -158,15 +158,9 @@ model City {
   @@map("city")
 }
 
-model ItemType {
-  id          String  @id @default(uuid()) @db.Uuid
-  name        String  @unique @map("name")
-  description String? @map("description")
-  isActive    Boolean @default(true) @map("is_active")
-
-  items Item[]
-
-  @@map("item_type")
+enum ItemType {
+  PRODUCT
+  SERVICE
 }
 
 model Item {
@@ -174,10 +168,8 @@ model Item {
   name        String  @map("name")
   code        String  @unique @map("code")
   description String? @map("description")
-  itemTypeId  String  @map("item_type_id") @db.Uuid
   isActive    Boolean @default(true) @map("is_active")
-
-  itemType ItemType @relation(fields: [itemTypeId], references: [id], onDelete: Restrict)
+  itemType    ItemType
 
   @@map("item")
 }
