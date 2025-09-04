@@ -99,26 +99,18 @@ model UserRole {
 model UserInfo {
   userId         String @map("user_id") @db.Uuid
   name           String @map("name")
+  documentType   DocumentType
   documentNumber String @map("document_number")
-  documentTypeId String @map("document_type_id") @db.Uuid
-
-  documentType DocumentType @relation(fields: [documentTypeId], references: [id], onDelete: Restrict)
 
   @@id([userId])
   @@map("user_info")
 }
 
-model DocumentType {
-  id       String  @id @default(uuid()) @db.Uuid
-  name     String  @unique @map("name")
-  code     String  @unique @map("code")
-  isActive Boolean @default(true) @map("is_active")
-
-  customers Customer[]
-  userInfo  UserInfo[]
-
-  @@unique([name, code])
-  @@map("document_type")
+enum DocumentType {
+  CEDULA_DE_CIUDADANIA
+  TARJETA_DE_IDENTIDAD
+  CEDULA_DE_EXTRANJERIA
+  NIT
 }
 
 model Country {
@@ -159,8 +151,8 @@ model City {
 }
 
 enum ItemType {
-  PRODUCT
-  SERVICE
+  PRODUCTO
+  SERVICIO
 }
 
 model Item {
@@ -177,14 +169,12 @@ model Item {
 model Customer {
   id             String @id @default(uuid()) @db.Uuid
   name           String @map("name")
-  documentTypeId String @map("document_type_id") @db.Uuid
+  documentType   DocumentType
   documentNumber String @map("document_number")
 
   email       String  @map("email")
   phoneNumber String  @map("phone_number")
   isActive    Boolean @default(true) @map("is_active")
-
-  documentType DocumentType @relation(fields: [documentTypeId], references: [id], onDelete: Restrict)
 
   @@map("customer")
 }

@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "DocumentType" AS ENUM ('CEDULA_DE_CIUDADANIA', 'TARJETA_DE_IDENTIDAD', 'CEDULA_DE_EXTRANJERIA', 'NIT');
+
+-- CreateEnum
+CREATE TYPE "ItemType" AS ENUM ('PRODUCTO', 'SERVICIO');
+
 -- CreateTable
 CREATE TABLE "tenant_migration" (
     "id" TEXT NOT NULL,
@@ -73,20 +79,10 @@ CREATE TABLE "user_role" (
 CREATE TABLE "user_info" (
     "user_id" UUID NOT NULL,
     "name" TEXT NOT NULL,
+    "documentType" "DocumentType" NOT NULL,
     "document_number" TEXT NOT NULL,
-    "document_type_id" UUID NOT NULL,
 
     CONSTRAINT "user_info_pkey" PRIMARY KEY ("user_id")
-);
-
--- CreateTable
-CREATE TABLE "document_type" (
-    "id" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "code" TEXT NOT NULL,
-    "is_active" BOOLEAN NOT NULL DEFAULT true,
-
-    CONSTRAINT "document_type_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -120,22 +116,13 @@ CREATE TABLE "city" (
 );
 
 -- CreateTable
-CREATE TABLE "item_type" (
-    "id" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT,
-    "is_active" BOOLEAN NOT NULL DEFAULT true,
-
-    CONSTRAINT "item_type_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "item" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
     "description" TEXT,
-    "item_type_id" UUID NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "itemType" "ItemType" NOT NULL,
 
     CONSTRAINT "item_pkey" PRIMARY KEY ("id")
 );
@@ -144,7 +131,7 @@ CREATE TABLE "item" (
 CREATE TABLE "customer" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
-    "document_type_id" UUID NOT NULL,
+    "documentType" "DocumentType" NOT NULL,
     "document_number" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "phone_number" TEXT NOT NULL,
@@ -175,19 +162,13 @@ CREATE UNIQUE INDEX "resource_name_parent_id_key" ON "resource"("name", "parent_
 CREATE UNIQUE INDEX "action_name_key" ON "action"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "role_name_key" ON "role"("name");
+
+-- CreateIndex
 CREATE INDEX "user_role_user_id_idx" ON "user_role"("user_id");
 
 -- CreateIndex
 CREATE INDEX "user_role_role_id_idx" ON "user_role"("role_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "document_type_name_key" ON "document_type"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "document_type_code_key" ON "document_type"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "document_type_name_code_key" ON "document_type"("name", "code");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "country_name_key" ON "country"("name");
@@ -208,7 +189,7 @@ CREATE INDEX "city_name_idx" ON "city"("name");
 CREATE UNIQUE INDEX "city_name_dane_code_department_id_key" ON "city"("name", "dane_code", "department_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "item_type_name_key" ON "item_type"("name");
+CREATE UNIQUE INDEX "item_code_key" ON "item"("code");
 
 -- AddForeignKey
 ALTER TABLE "resource" ADD CONSTRAINT "resource_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -229,16 +210,7 @@ ALTER TABLE "role_action" ADD CONSTRAINT "role_action_action_id_fkey" FOREIGN KE
 ALTER TABLE "user_role" ADD CONSTRAINT "user_role_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_info" ADD CONSTRAINT "user_info_document_type_id_fkey" FOREIGN KEY ("document_type_id") REFERENCES "document_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "department" ADD CONSTRAINT "department_country_id_fkey" FOREIGN KEY ("country_id") REFERENCES "country"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "city" ADD CONSTRAINT "city_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "item" ADD CONSTRAINT "item_item_type_id_fkey" FOREIGN KEY ("item_type_id") REFERENCES "item_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "customer" ADD CONSTRAINT "customer_document_type_id_fkey" FOREIGN KEY ("document_type_id") REFERENCES "document_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

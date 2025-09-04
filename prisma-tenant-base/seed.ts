@@ -1,11 +1,10 @@
-import { SeedLogger } from 'prisma-principal/utils/seed-logger';
+import { SeedLogger } from '../prisma-principal/utils/seed-logger';
 import { PrismaClient } from './tenant-database-client-types';
-import { companyData } from 'prisma-principal/data/company.data';
+import { companyData } from '../prisma-principal/data/company.data';
 import {
   seedApplications,
   seedResources,
   seedActions,
-  seedDocumentTypes,
   seedRoles,
   seedRoleActions,
   seedUserRoles,
@@ -28,7 +27,6 @@ async function main() {
     await seedApplications(prisma);
     await seedResources(prisma);
     await seedActions(prisma);
-    await seedDocumentTypes(prisma);
     await seedRoles(prisma);
     await seedRoleActions(prisma);
     await seedUserRoles(prisma);
