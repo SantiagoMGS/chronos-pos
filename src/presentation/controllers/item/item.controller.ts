@@ -31,7 +31,12 @@ import { CreateItemDto } from './dtos/create-item.dto';
 import { UpdateItemDto } from './dtos/update-item.dto';
 import { ItemResponseDto } from './dtos/item-response.dto';
 import { QueryItemsDto } from './dtos/query-items.dto';
-import { getResponseSchema, getArrayResponseSchema, ApiResponseDto } from 'src/shared/dtos/api-response.dto';
+import {
+  getResponseSchema,
+  getArrayResponseSchema,
+  ApiResponseDto,
+  getPaginatedResponseSchema,
+} from 'src/shared/dtos/api-response.dto';
 import { CustomResponse } from 'src/core/decorators/custom.response.decorator';
 import { CreateItemUseCase } from '@domain/use-cases/item/create-item.use-case';
 import { GetItemUseCase } from '@domain/use-cases/item/get-item.use-case';
@@ -78,22 +83,17 @@ export class ItemController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los items' })
-  @ApiQuery({
-    name: 'activeOnly',
-    required: false,
-    type: Boolean,
-    description: 'Filtrar solo items activos',
-  })
+  @ApiOperation({ summary: 'Obtener todos los items (paginado)' })
   @ApiOkResponse({
     description: 'Lista de items obtenida correctamente',
-    ...getArrayResponseSchema(ItemResponseDto),
+    ...getPaginatedResponseSchema(ItemResponseDto),
   })
   @CustomResponse({
     successMessage: 'Items obtenidos correctamente',
   })
-  async findAll(@Query() query: QueryItemsDto): Promise<ItemResponseDto[]> {
-    return await this.getAllItemsUseCase.execute(query.activeOnly);
+  async findAll(@Query() query: QueryItemsDto) {
+    const { page = 1, limit = 10, withDeleted } = query;
+    return await this.getAllItemsUseCase.execute({ page, limit, withDeleted });
   }
 
   @Get(':id')

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TenantPrismaService } from '@core/services/tenant-prisma-client.service';
 import { ItemRepository } from '@domain/repositories/item/item.repository';
 import { Item, ItemType } from '@domain/entities/item.entity';
+import { IPaginatedData, IPaginationOptions } from '@shared/types/pagination';
 
 @Injectable()
 export class ItemDataSourceService implements ItemRepository {
@@ -75,6 +76,46 @@ export class ItemDataSourceService implements ItemRepository {
       ...item,
       itemType: item.itemType as ItemType,
     }));
+  }
+
+  async findPaginated(options: IPaginationOptions): Promise<IPaginatedData<Item>> {
+    const page = Math.max(1, options.page || 1);
+    const limit = Math.max(1, Math.min(100, options.limit || 10));
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+    if (!options.withDeleted) {
+      where.isActive = true;
+    }
+
+    const [items, total] = await this.tenantPrisma.client.$transaction([
+      this.tenantPrisma.client.item.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { name: 'asc' },
+      }),
+      this.tenantPrisma.client.item.count({ where }),
+    ]);
+
+    const mappedItems: Item[] = items.map((item) => ({
+      ...item,
+      itemType: item.itemType as ItemType,
+    }));
+
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+
+    return {
+      items: mappedItems,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
   }
 
   async update(id: string, item: Partial<Omit<Item, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Item> {

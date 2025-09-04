@@ -108,3 +108,42 @@ export function getPrimitiveArrayResponseSchema(itemSchema: Record<string, unkno
     },
   };
 }
+
+/**
+ * Función para crear un schema de respuesta API paginada para Swagger
+ * @param itemDto El DTO que representa cada elemento del array
+ * @returns Un objeto de configuración para usar con @ApiResponse
+ */
+export function getPaginatedResponseSchema(itemDto: { name: string }) {
+  return {
+    schema: {
+      allOf: [
+        { $ref: '#/components/schemas/ApiResponseDto' },
+        {
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                items: {
+                  type: 'array',
+                  items: { $ref: `#/components/schemas/${itemDto.name}` },
+                },
+                meta: {
+                  type: 'object',
+                  properties: {
+                    page: { type: 'integer', example: 1 },
+                    limit: { type: 'integer', example: 10 },
+                    total: { type: 'integer', example: 42 },
+                    totalPages: { type: 'integer', example: 5 },
+                    hasNextPage: { type: 'boolean', example: true },
+                    hasPreviousPage: { type: 'boolean', example: false },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  };
+}

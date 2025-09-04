@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ItemRepository } from '@domain/repositories/item/item.repository';
 import { Item } from '@domain/entities/item.entity';
+import { IPaginatedData, IPaginationOptions } from '@shared/types/pagination';
 
 @Injectable()
 export class GetAllItemsUseCase {
   constructor(private readonly itemRepository: ItemRepository) {}
 
-  async execute(activeOnly: boolean = false): Promise<Item[]> {
-    if (activeOnly) {
-      return await this.itemRepository.findActive();
-    }
-    return await this.itemRepository.findAll();
+  async execute(options: IPaginationOptions): Promise<IPaginatedData<Item>> {
+    return await this.itemRepository.findPaginated(options);
   }
 }
