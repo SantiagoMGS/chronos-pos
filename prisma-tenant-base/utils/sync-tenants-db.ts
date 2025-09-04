@@ -281,7 +281,12 @@ export class TenantSyncManager {
 async function main() {
   const syncManager = new TenantSyncManager();
 
-  const companies: CompanyInfo[] = [{ name: 'Empresa Demo', dbName: 'demo_tenant' }];
+  const { companyData } = await import('../../prisma-principal/data/company.data');
+
+  const companies: CompanyInfo[] = companyData.map((company) => ({
+    name: company.name,
+    dbName: company.dbName,
+  }));
 
   await syncManager.syncTenantList(companies);
 }

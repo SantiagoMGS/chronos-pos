@@ -1,53 +1,52 @@
 import { Prisma } from '../tenant-database-client-types';
 
 export const roleActionData: Prisma.RoleActionCreateInput[] = [
-  // Asignar todas las acciones al rol de administrador
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440101' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'CREAR_FACTURA' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440102' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'VER_FACTURAS' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440103' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'EDITAR_FACTURA' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440104' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'ELIMINAR_FACTURA' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440105' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'CREAR_PRODUCTO' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440106' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'VER_PRODUCTOS' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440107' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'EDITAR_PRODUCTO' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440108' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'ELIMINAR_PRODUCTO' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440109' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'CREAR_CLIENTE' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440110' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'VER_CLIENTES' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440111' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'EDITAR_CLIENTE' } },
   },
   {
-    role: { connect: { id: '550e8400-e29b-41d4-a716-446655440500' } },
-    action: { connect: { id: '550e8400-e29b-41d4-a716-446655440112' } },
+    role: { connect: { name: 'ADMINISTRADOR' } },
+    action: { connect: { name: 'ELIMINAR_CLIENTE' } },
   },
 ];

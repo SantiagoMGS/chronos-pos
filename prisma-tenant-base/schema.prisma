@@ -61,7 +61,7 @@ model Action {
 
 model Role {
   id          String   @id @default(uuid()) @db.Uuid
-  name        String   @map("name")
+  name        String   @map("name") @unique
   description String?  @map("description")
   createdAt   DateTime @default(now()) @map("created_at")
   isActive    Boolean  @default(true) @map("is_active")
