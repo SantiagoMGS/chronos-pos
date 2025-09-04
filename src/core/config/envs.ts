@@ -10,26 +10,41 @@ interface EnvVars {
   PRINCIPAL_DB_NAME: string;
   PRINCIPAL_DATABASE_URL: string;
   TENANT_BASE_DATABASE_URL: string;
+  DB_USER?: string;
+  DB_PASS?: string;
+  DB_HOST?: string;
+  DB_PORT?: number;
 }
 
 const envVarsSchema = joi
   .object({
-    PORT: joi.number().default(8443),
-    JWT_REFRESH_SECRET: joi.string().default('borealis_dev_refresh'),
-    JWT_REFRESH_EXPIRATION: joi.string().default('24h'),
-    JWT_EXPIRATION: joi.string().default('8h'),
-    JWT_SECRET: joi.string().default('borealis_dev'),
+    PORT: joi.number().integer().min(1).max(65535).required(),
+    JWT_REFRESH_SECRET: joi.string().min(1).required(),
+    JWT_REFRESH_EXPIRATION: joi.string().min(1).required(),
+    JWT_EXPIRATION: joi.string().min(1).required(),
+    JWT_SECRET: joi.string().min(1).required(),
 
-    // Database configuration
-    PRINCIPAL_DB_NAME: joi.string().default('principal'),
-    PRINCIPAL_DATABASE_URL: joi.string().default('postgresql://postgres:postgres@localhost:5432/principal'),
-    TENANT_BASE_DATABASE_URL: joi.string().default('postgresql://postgres:postgres@localhost:5432/base_db'),
+    // Database configuration (requeridas, sin valores por defecto)
+    PRINCIPAL_DB_NAME: joi.string().min(1).required(),
+    PRINCIPAL_DATABASE_URL: joi.string().min(1).required(),
+    TENANT_BASE_DATABASE_URL: joi.string().min(1).required(),
+
+    // Opcionales adicionales (para compatibilidad con despliegues)
+    DB_USER: joi.string().optional(),
+    DB_PASS: joi.string().optional(),
+    DB_HOST: joi.string().optional(),
+    DB_PORT: joi.number().integer().min(1).max(65535).optional(),
   })
   .unknown(true);
 
-const { error, value } = envVarsSchema.validate(process.env);
+const { error, value } = envVarsSchema.validate(process.env, { abortEarly: false, allowUnknown: true, convert: true });
 
-if (error) throw new Error(`Config validation error: ${error.message}`);
+if (error) {
+  const details = error.details
+    .map((d) => `- ${d.context?.key}: ${d.message.replace(/\"/g, '"').replace(/"/g, '')}`)
+    .join('\n');
+  throw new Error(`Error en configuración de variables de entorno:\n${details}`);
+}
 
 const envVars: EnvVars = value;
 
@@ -47,4 +62,8 @@ export const envs = {
   principalDbName: envVars.PRINCIPAL_DB_NAME,
   principalDatabaseUrl: envVars.PRINCIPAL_DATABASE_URL,
   tenantBaseDatabaseUrl: envVars.TENANT_BASE_DATABASE_URL,
+  dbUser: envVars.DB_USER,
+  dbPass: envVars.DB_PASS,
+  dbHost: envVars.DB_HOST,
+  dbPort: envVars.DB_PORT,
 };
