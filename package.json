@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npm run deploy && npm run sync-tenants && npm run generate && nest build",
+    "build": "npm run generate && npm run deploy && npm run sync-tenants && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
