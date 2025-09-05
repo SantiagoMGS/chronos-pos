@@ -3,6 +3,7 @@ import { TenantPrismaService } from '@core/services/tenant-prisma-client.service
 import { CustomerRepository } from '@domain/repositories/customer/customer.repository';
 import { Customer, DocumentType } from '@domain/entities/customer.entity';
 import { IPaginatedData, IPaginationOptions } from '@shared/types/pagination';
+import { normalizePagination, toPaginatedData } from '@shared/utils/pagination';
 
 @Injectable()
 export class CustomerDataSourceService implements CustomerRepository {
@@ -51,9 +52,7 @@ export class CustomerDataSourceService implements CustomerRepository {
   }
 
   async findPaginated(options: IPaginationOptions): Promise<IPaginatedData<Customer>> {
-    const page = Math.max(1, options.page || 1);
-    const limit = Math.max(1, Math.min(100, options.limit || 10));
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = normalizePagination(options.page, options.limit);
 
     const where: Record<string, unknown> = {};
     if (!options.withDeleted) where.isActive = true;
@@ -64,12 +63,7 @@ export class CustomerDataSourceService implements CustomerRepository {
     ]);
 
     const items: Customer[] = rows.map((r) => ({ ...r, documentType: r.documentType as unknown as DocumentType }));
-    const totalPages = Math.max(1, Math.ceil(total / limit));
-
-    return {
-      items,
-      meta: { page, limit, total, totalPages, hasNextPage: page < totalPages, hasPreviousPage: page > 1 },
-    };
+    return toPaginatedData(items, page, limit, total);
   }
 
   async update(id: string, customer: Partial<Omit<Customer, 'id'>>): Promise<Customer> {

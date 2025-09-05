@@ -3,6 +3,7 @@ import { TenantPrismaService } from '@core/services/tenant-prisma-client.service
 import { ItemRepository } from '@domain/repositories/item/item.repository';
 import { Item, ItemType } from '@domain/entities/item.entity';
 import { IPaginatedData, IPaginationOptions } from '@shared/types/pagination';
+import { normalizePagination, toPaginatedData } from '@shared/utils/pagination';
 
 @Injectable()
 export class ItemDataSourceService implements ItemRepository {
@@ -79,9 +80,7 @@ export class ItemDataSourceService implements ItemRepository {
   }
 
   async findPaginated(options: IPaginationOptions): Promise<IPaginatedData<Item>> {
-    const page = Math.max(1, options.page || 1);
-    const limit = Math.max(1, Math.min(100, options.limit || 10));
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = normalizePagination(options.page, options.limit);
 
     const where: Record<string, unknown> = {};
     if (!options.withDeleted) {
@@ -103,19 +102,7 @@ export class ItemDataSourceService implements ItemRepository {
       itemType: item.itemType as ItemType,
     }));
 
-    const totalPages = Math.max(1, Math.ceil(total / limit));
-
-    return {
-      items: mappedItems,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      },
-    };
+    return toPaginatedData(mappedItems, page, limit, total);
   }
 
   async update(id: string, item: Partial<Omit<Item, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Item> {
