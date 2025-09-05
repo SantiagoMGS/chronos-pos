@@ -14,7 +14,6 @@ export class CreateItemUseCase {
   constructor(private readonly itemRepository: ItemRepository) {}
 
   async execute(createItemDto: CreateItemDto): Promise<Item> {
-    // Verificar si ya existe un item con el mismo código
     const existingItem = await this.itemRepository.findByCode(createItemDto.code);
     if (existingItem) {
       throw new ConflictException('Ya existe un item con este código');

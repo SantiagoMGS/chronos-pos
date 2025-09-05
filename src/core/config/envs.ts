@@ -24,12 +24,10 @@ const envVarsSchema = joi
     JWT_EXPIRATION: joi.string().min(1).required(),
     JWT_SECRET: joi.string().min(1).required(),
 
-    // Database configuration (requeridas, sin valores por defecto)
     PRINCIPAL_DB_NAME: joi.string().min(1).required(),
     PRINCIPAL_DATABASE_URL: joi.string().min(1).required(),
     TENANT_BASE_DATABASE_URL: joi.string().min(1).required(),
 
-    // Opcionales adicionales (para compatibilidad con despliegues)
     DB_USER: joi.string().optional(),
     DB_PASS: joi.string().optional(),
     DB_HOST: joi.string().optional(),
@@ -49,16 +47,13 @@ if (error) {
 const envVars: EnvVars = value;
 
 export const envs = {
-  // General configuration
   port: envVars.PORT,
 
-  // Auth configuration
   jwtSecret: envVars.JWT_SECRET,
   jwtExpiration: envVars.JWT_EXPIRATION,
   jwtRefreshSecret: envVars.JWT_REFRESH_SECRET,
   jwtRefreshExpiration: envVars.JWT_REFRESH_EXPIRATION,
 
-  // Database configuration
   principalDbName: envVars.PRINCIPAL_DB_NAME,
   principalDatabaseUrl: envVars.PRINCIPAL_DATABASE_URL,
   tenantBaseDatabaseUrl: envVars.TENANT_BASE_DATABASE_URL,

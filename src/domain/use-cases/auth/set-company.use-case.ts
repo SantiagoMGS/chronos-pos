@@ -1,21 +1,23 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { TokenPayload } from '@application/services/auth/interfaces/token-payload.entity';
 import { TokenService } from '@application/services/auth/token.service';
 import { UserFinderService } from '@application/services/user/user-finder.service';
 import { CompanyAccessRepository } from '@domain/repositories/company/company-access.repository';
+import { PermissionsRepository } from '@domain/repositories/auth/permissions.repository';
+import { CompanyInfoDto } from '@presentation/controllers/auth/dtos/permissions-response.dto';
 
 @Injectable()
 export class SetCompanyUseCase {
   constructor(
-    private readonly userFinderService: UserFinderService,
     private readonly tokenService: TokenService,
     private readonly companyAccessRepository: CompanyAccessRepository,
+    private readonly permissionsRepository: PermissionsRepository,
   ) {}
 
   async execute(input: {
     userId: string;
     companyId: string;
-  }): Promise<{ access_token: string; refresh_token: string }> {
+  }): Promise<{ access_token: string; refresh_token: string; company: CompanyInfoDto }> {
     const { userId, companyId } = input;
     if (!userId) {
       throw new UnauthorizedException('Usuario no autenticado');
@@ -35,6 +37,18 @@ export class SetCompanyUseCase {
 
     const tokens = this.tokenService.generateTokens(payload);
 
-    return tokens;
+    const company = await this.permissionsRepository.getCompanyWithBranding(companyId);
+    if (!company) {
+      throw new NotFoundException('Compañía no encontrada');
+    }
+
+    const companyInfo: CompanyInfoDto = {
+      id: company.id,
+      name: company.name,
+      shortName: company.name,
+      branding: company.branding,
+    };
+
+    return { ...tokens, company: companyInfo };
   }
 }

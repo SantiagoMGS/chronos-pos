@@ -6,17 +6,10 @@ import { CompanyWithBranding, PermissionApplication, RoleInfo } from '@domain/re
 
 export class PermissionsMapper {
   static toPermissionsByCompanyResponse(
-    company: CompanyWithBranding,
     role: RoleInfo,
     applications: PermissionApplication[],
   ): PermissionsByCompanyResponseDto {
     return {
-      company: {
-        id: company.id,
-        name: company.name,
-        shortName: company.name,
-        branding: company.branding,
-      },
       role: {
         id: role.id,
         name: role.name,

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
+import { CompanyInfoDto } from './permissions-response.dto';
 
 export class SetCompanyDto {
   @ApiProperty({
@@ -23,4 +24,10 @@ export class SetCompanyResponseDto {
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
   refresh_token!: string;
+
+  @ApiProperty({
+    description: 'Información de la compañía seleccionada',
+    type: CompanyInfoDto,
+  })
+  company!: CompanyInfoDto;
 }

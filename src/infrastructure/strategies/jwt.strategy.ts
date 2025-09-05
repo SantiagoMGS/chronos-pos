@@ -27,7 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException(TOKEN_MESSAGE.TOKEN_NOT_FOUND);
     }
 
-    // Retornamos los datos del payload, manejando campos opcionales
     return {
       userId: payload.sub,
       roleId: payload.roleId || null,

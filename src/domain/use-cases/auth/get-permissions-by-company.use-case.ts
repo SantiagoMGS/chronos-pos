@@ -22,15 +22,11 @@ export class GetPermissionsByCompanyUseCase {
       this.permissionsRepository.getActiveRoleByUserId(user.userId),
     ]);
 
-    if (!company) {
-      throw new NotFoundException('Compañía no encontrada');
-    }
-
     if (!role) {
       throw new NotFoundException('Rol activo no encontrado para el usuario');
     }
 
     const apps = await this.permissionsRepository.getApplicationsTreeWithRolePermissions(role.id);
-    return PermissionsMapper.toPermissionsByCompanyResponse(company, role, apps);
+    return PermissionsMapper.toPermissionsByCompanyResponse(role, apps);
   }
 }

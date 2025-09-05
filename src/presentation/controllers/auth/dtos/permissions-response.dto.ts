@@ -184,12 +184,6 @@ export class RoleResponseDto {
 
 export class PermissionsByCompanyResponseDto {
   @ApiProperty({
-    description: 'Información de la compañía',
-    type: CompanyInfoDto,
-  })
-  company!: CompanyInfoDto;
-
-  @ApiProperty({
     description: 'Rol del usuario en la compañía',
     type: RoleResponseDto,
   })
