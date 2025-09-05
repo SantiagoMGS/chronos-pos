@@ -27,20 +27,12 @@ export class LoginUseCase {
     const tokens = this.tokenService.generateTokens(payload);
 
     return {
-      id: user.id,
+      userId: user.id,
       tokens,
       companies: user.userCompanies.map((uc) => ({
         id: uc.company.id,
         name: uc.company.name,
         shortName: uc.company.shortName || '',
-        branding: uc.company.companyBranding?.[0]
-          ? {
-              logo: uc.company.companyBranding[0].logo,
-              primaryColor: uc.company.companyBranding[0].primaryColor,
-              secondaryColor: uc.company.companyBranding[0].secondaryColor,
-              tertiaryColor: uc.company.companyBranding[0].tertiaryColor,
-            }
-          : null,
       })),
     };
   }

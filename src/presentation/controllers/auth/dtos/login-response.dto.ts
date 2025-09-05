@@ -48,13 +48,6 @@ export class CompanyResponseDto {
     example: 'EmpEjemplo',
   })
   shortName!: string;
-
-  @ApiProperty({
-    description: 'Información de branding de la compañía',
-    type: CompanyBrandingDto,
-    nullable: true,
-  })
-  branding!: CompanyBrandingDto | null;
 }
 
 export class TokensDto {
@@ -70,7 +63,7 @@ export class LoginResponseDto {
     description: 'ID único del usuario',
     example: '12345678-1234-1234-1234-123456789012',
   })
-  id!: string;
+  userId!: string;
 
   @ApiProperty({
     description: 'Tokens de autenticación',
