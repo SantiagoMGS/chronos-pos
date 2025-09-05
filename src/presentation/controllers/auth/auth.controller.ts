@@ -110,6 +110,6 @@ export class AuthController {
     successMessage: 'Permisos obtenidos correctamente',
   })
   async getPermissionsByCompany(@CurrentUser() user: CurrentUserDto): Promise<PermissionsByCompanyResponseDto> {
-    return await this.getPermissionsByCompanyUseCase.execute(user.userId);
+    return await this.getPermissionsByCompanyUseCase.execute(user);
   }
 }

@@ -13,7 +13,10 @@ import { UserRepository } from '@domain/repositories/user/user.repository';
 import { UserDataSourceService } from '@infrastructure/datasource/user/user.datasource.service';
 import { CompanyAccessRepository } from '@domain/repositories/company/company-access.repository';
 import { CompanyAccessDataSourceService } from '@infrastructure/datasource/company/company-access.datasource.service';
+import { PermissionsRepository } from '@domain/repositories/auth/permissions.repository';
+import { PermissionsDataSourceService } from '@infrastructure/datasource/auth/permissions.datasource.service';
 import { PrincipalPrismaService } from '@core/services/principal-prisma-client.service';
+import { TenantPrismaService } from '@core/services/tenant-prisma-client.service';
 import { JwtStrategy } from '@infrastructure/strategies/jwt.strategy';
 import { ResponseInterceptor } from '../../../core/interceptores/response.interceptor';
 import { envs } from '@core/config/envs';
@@ -45,6 +48,11 @@ import { envs } from '@core/config/envs';
     {
       provide: CompanyAccessRepository,
       useClass: CompanyAccessDataSourceService,
+    },
+    TenantPrismaService,
+    {
+      provide: PermissionsRepository,
+      useClass: PermissionsDataSourceService,
     },
   ],
   exports: [TokenService, BcryptService],

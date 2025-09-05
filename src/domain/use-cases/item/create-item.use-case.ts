@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ItemRepository } from '@domain/repositories/item/item.repository';
 import { Item, ItemType } from '@domain/entities/item.entity';
 
@@ -17,7 +17,7 @@ export class CreateItemUseCase {
     // Verificar si ya existe un item con el mismo código
     const existingItem = await this.itemRepository.findByCode(createItemDto.code);
     if (existingItem) {
-      throw new Error('Ya existe un item con este código');
+      throw new ConflictException('Ya existe un item con este código');
     }
 
     const itemData = {
