@@ -1,5 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { Customer, DocumentType } from '@domain/entities/customer.entity';
+import { DOMAIN_MESSAGE } from '@shared/constants/domain-message';
 import { CustomerRepository } from '@domain/repositories/customer/customer.repository';
 
 export interface CreateCustomerDto {
@@ -17,7 +18,7 @@ export class CreateCustomerUseCase {
   async execute(dto: CreateCustomerDto): Promise<Customer> {
     const existing = await this.customerRepository.findByDocument(dto.documentType, dto.documentNumber);
     if (existing) {
-      throw new ConflictException('Ya existe un cliente con este tipo y número de documento');
+      throw new ConflictException(DOMAIN_MESSAGE.CUSTOMER.DOC_CONFLICT);
     }
 
     const data: Omit<Customer, 'id'> = {

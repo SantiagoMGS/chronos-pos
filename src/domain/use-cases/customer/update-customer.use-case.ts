@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Customer, DocumentType } from '@domain/entities/customer.entity';
 import { CustomerRepository } from '@domain/repositories/customer/customer.repository';
+import { DOMAIN_MESSAGE } from '@shared/constants/domain-message';
 
 export interface UpdateCustomerDto {
   name?: string;
@@ -17,7 +18,7 @@ export class UpdateCustomerUseCase {
 
   async execute(id: string, dto: UpdateCustomerDto): Promise<Customer> {
     const existing = await this.customerRepository.findById(id);
-    if (!existing) throw new NotFoundException('Cliente no encontrado');
+    if (!existing) throw new NotFoundException(DOMAIN_MESSAGE.CUSTOMER.NOT_FOUND);
 
     if (
       (dto.documentType && dto.documentType !== existing.documentType) ||
@@ -28,7 +29,7 @@ export class UpdateCustomerUseCase {
         dto.documentNumber ?? existing.documentNumber,
       );
       if (duplicate && duplicate.id !== id) {
-        throw new ConflictException('Ya existe un cliente con este tipo y número de documento');
+        throw new ConflictException(DOMAIN_MESSAGE.CUSTOMER.DOC_CONFLICT);
       }
     }
 
