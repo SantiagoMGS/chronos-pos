@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { envs } from '@core/config/envs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,14 +38,20 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document, {
-    swaggerOptions: { persistAuthorization: true },
-  });
+  app.use(
+    '/api/docs',
+    apiReference({
+      content: document,
+      theme: 'purple',
+      layout: 'modern',
+      darkMode: true,
+    }),
+  );
 
   const port = envs.port;
   await app.listen(port);
 
   logger.log(`🚀 Aplicación iniciada en http://localhost:${port}/api`);
-  logger.log(`📚 Documentación Swagger disponible en http://localhost:${port}/api/docs`);
+  logger.log(`📚 Documentación API (Scalar) disponible en http://localhost:${port}/api/docs`);
 }
 bootstrap();
