@@ -5,3 +5,5 @@ export { seedRoleActions } from './seed-role-action';
 export { seedUserInfo } from './seed-user-info';
 export { seedRoles } from './seed-role';
 export { seedUserRoles } from './seed-user-role';
+export { seedItems } from './seed-item';
+export { seedCustomers } from './seed-customer';

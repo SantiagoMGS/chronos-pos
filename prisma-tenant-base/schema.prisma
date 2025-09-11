@@ -172,7 +172,7 @@ model Customer {
   id             String @id @default(uuid()) @db.Uuid
   name           String @map("name")
   documentType   DocumentType
-  documentNumber String @map("document_number")
+  documentNumber String @map("document_number") @unique
 
   email       String  @map("email")
   phoneNumber String  @map("phone_number")
