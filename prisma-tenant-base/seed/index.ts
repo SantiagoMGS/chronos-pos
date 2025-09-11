@@ -7,3 +7,6 @@ export { seedRoles } from './seed-role';
 export { seedUserRoles } from './seed-user-role';
 export { seedItems } from './seed-item';
 export { seedCustomers } from './seed-customer';
+export { seedCities } from './seed-city';
+export { seedCountries } from './seed-country';
+export { seedDepartments } from './seed-department';

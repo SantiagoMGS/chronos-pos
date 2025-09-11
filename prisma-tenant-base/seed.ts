@@ -9,6 +9,9 @@ import {
   seedRoleActions,
   seedUserRoles,
   seedUserInfo,
+  seedCities,
+  seedCountries,
+  seedDepartments,
 } from './seed/';
 
 async function main() {
@@ -24,6 +27,9 @@ async function main() {
       },
     });
 
+    await seedCountries(prisma);
+    await seedDepartments(prisma);
+    await seedCities(prisma);
     await seedApplications(prisma);
     await seedResources(prisma);
     await seedActions(prisma);
