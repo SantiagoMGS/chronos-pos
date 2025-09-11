@@ -14,6 +14,7 @@ import {
   seedCountries,
   seedDepartments,
   seedMeasurementUnits,
+  seedCustomers,
 } from './seed/';
 
 async function main() {
@@ -40,6 +41,7 @@ async function main() {
     await seedRoleActions(prisma);
     await seedUserRoles(prisma);
     await seedItems(prisma);
+    await seedCustomers(prisma);
     await seedUserInfo(prisma);
 
     void prisma.$disconnect();
