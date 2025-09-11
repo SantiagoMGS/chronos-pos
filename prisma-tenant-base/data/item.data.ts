@@ -7,6 +7,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0001',
     description: 'Laptop profesional 14 pulgadas, 16GB RAM, 512GB SSD',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440202',
@@ -14,6 +15,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0002',
     description: 'Mouse inalámbrico ergonómico',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440203',
@@ -21,6 +23,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0003',
     description: 'Teclado mecánico con switches azules',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440204',
@@ -28,6 +31,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0004',
     description: 'Monitor 4K UHD de 27 pulgadas',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440205',
@@ -35,6 +39,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0005',
     description: 'Unidad de estado sólido 1TB NVMe',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440206',
@@ -42,6 +47,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0006',
     description: 'Auriculares con cancelación de ruido',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440207',
@@ -49,6 +55,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0007',
     description: 'Cámara web 1080p con micrófono',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440208',
@@ -56,6 +63,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0008',
     description: 'Impresora láser monocromática',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440209',
@@ -63,6 +71,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0009',
     description: 'Router con soporte Wi‑Fi 6',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440210',
@@ -70,6 +79,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'PRD-0010',
     description: 'Cargador rápido USB‑C de 65W',
     itemType: 'PRODUCTO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440211',
@@ -77,6 +87,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0001',
     description: 'Instalación y configuración de software estándar',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440212',
@@ -84,6 +95,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0002',
     description: 'Limpieza y mantenimiento de equipos de cómputo',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440213',
@@ -91,6 +103,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0003',
     description: 'Soporte técnico remoto por hora',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440214',
@@ -98,6 +111,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0004',
     description: 'Evaluación y diagnóstico de fallas de hardware',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440215',
@@ -105,6 +119,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0005',
     description: 'Servicios de recuperación de datos no críticos',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440216',
@@ -112,6 +127,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0006',
     description: 'Capacitación en ofimática para grupos',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440217',
@@ -119,6 +135,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0007',
     description: 'Instalación y configuración de redes pequeñas',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440218',
@@ -126,6 +143,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0008',
     description: 'Optimización de rendimiento de sistemas operativos',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440219',
@@ -133,6 +151,7 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0009',
     description: 'Auditoría de seguridad básica',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
   {
     id: '660e8400-e29b-41d4-a716-446655440220',
@@ -140,5 +159,6 @@ export const itemData: Prisma.ItemCreateInput[] = [
     code: 'SRV-0010',
     description: 'Desarrollo de funcionalidades a medida (por hora)',
     itemType: 'SERVICIO',
+    measurementUnit: { connect: { code: '94' } },
   },
 ];

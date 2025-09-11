@@ -26,8 +26,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Aurum API')
-    .setDescription('Documentación de la API de Aurum')
+    .setTitle('ChronoPOS API')
+    .setDescription('Documentación de la API de ChronoPOS')
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',
@@ -41,6 +41,7 @@ async function bootstrap() {
   app.use(
     '/api/docs',
     apiReference({
+      title: 'Docs ChronoPOS API',
       content: document,
       theme: 'purple',
       layout: 'modern',

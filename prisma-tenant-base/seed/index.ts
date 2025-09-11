@@ -6,6 +6,7 @@ export { seedUserInfo } from './seed-user-info';
 export { seedRoles } from './seed-role';
 export { seedUserRoles } from './seed-user-role';
 export { seedItems } from './seed-item';
+export { seedMeasurementUnits } from './seed-measurement-unit';
 export { seedCustomers } from './seed-customer';
 export { seedCities } from './seed-city';
 export { seedCountries } from './seed-country';
