@@ -61,7 +61,7 @@ model Action {
 
 model Role {
   id          String   @id @default(uuid()) @db.Uuid
-  name        String   @map("name") @unique
+  name        String   @unique @map("name")
   description String?  @map("description")
   createdAt   DateTime @default(now()) @map("created_at")
   isActive    Boolean  @default(true) @map("is_active")
@@ -97,10 +97,10 @@ model UserRole {
 }
 
 model UserInfo {
-  userId         String @map("user_id") @db.Uuid
-  name           String @map("name")
+  userId         String       @map("user_id") @db.Uuid
+  name           String       @map("name")
   documentType   DocumentType
-  documentNumber String @map("document_number")
+  documentNumber String       @map("document_number")
 
   @@id([userId])
   @@map("user_info")
@@ -155,6 +155,16 @@ enum ItemType {
   SERVICIO
 }
 
+model MeasurementUnit {
+  id   String @id @default(uuid()) @db.Uuid
+  code String @unique @map("code")
+  name String @unique @map("name")
+
+  items Item[]
+
+  @@map("measurement_unit")
+}
+
 model Item {
   id          String   @id @default(uuid()) @db.Uuid
   name        String   @map("name")
@@ -165,14 +175,17 @@ model Item {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  measurementUnitId String?          @map("measurement_unit_id") @db.Uuid
+  measurementUnit   MeasurementUnit? @relation(fields: [measurementUnitId], references: [id], onDelete: Restrict)
+
   @@map("item")
 }
 
 model Customer {
-  id             String @id @default(uuid()) @db.Uuid
-  name           String @map("name")
+  id             String       @id @default(uuid()) @db.Uuid
+  name           String       @map("name")
   documentType   DocumentType
-  documentNumber String @map("document_number")
+  documentNumber String       @unique @map("document_number")
 
   email       String  @map("email")
   phoneNumber String  @map("phone_number")

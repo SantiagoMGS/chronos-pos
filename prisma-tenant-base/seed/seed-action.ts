@@ -3,10 +3,10 @@ import { actionData } from '../data/action.data';
 import { SeedLogger } from '../utils/seed-logger';
 
 export async function seedActions(prisma: PrismaClient) {
-  SeedLogger.info('Eliminando acciones existentes...', '🗑️');
+  SeedLogger.info('Eliminando role_actions y acciones existentes...', '🗑️');
 
-  await prisma.action.deleteMany({});
-  SeedLogger.success('Acciones existentes eliminadas');
+  await prisma.$transaction([prisma.roleAction.deleteMany({}), prisma.action.deleteMany({})]);
+  SeedLogger.success('role_actions y acciones existentes eliminadas');
 
   SeedLogger.info('Obteniendo recursos para mapear IDs...', '📋');
 

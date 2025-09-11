@@ -4,10 +4,11 @@ import { AppService } from './app.service';
 import { AuthModule } from '@presentation/controllers/auth/auth.module';
 import { ItemModule } from '@presentation/controllers/item/item.module';
 import { CommonModule } from '@presentation/controllers/common/common.module';
+import { FactusModule } from '@presentation/controllers/factus/factus.module';
 import { CustomerModule } from '@presentation/controllers/customer/customer.module';
 
 @Module({
-  imports: [AuthModule, ItemModule, CustomerModule, CommonModule],
+  imports: [AuthModule, ItemModule, CustomerModule, CommonModule, FactusModule],
   controllers: [AppController],
   providers: [AppService],
 })

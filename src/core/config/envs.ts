@@ -14,6 +14,11 @@ interface EnvVars {
   DB_PASS?: string;
   DB_HOST?: string;
   DB_PORT?: number;
+  FACTUS_CLIENT_ID: string;
+  FACTUS_CLIENT_SECRET: string;
+  FACTUS_USERNAME: string;
+  FACTUS_PASSWORD: string;
+  FACTUS_BASE_URL: string;
 }
 
 const envVarsSchema = joi
@@ -32,6 +37,12 @@ const envVarsSchema = joi
     DB_PASS: joi.string().optional(),
     DB_HOST: joi.string().optional(),
     DB_PORT: joi.number().integer().min(1).max(65535).optional(),
+
+    FACTUS_CLIENT_ID: joi.string().min(1).required(),
+    FACTUS_CLIENT_SECRET: joi.string().min(1).required(),
+    FACTUS_USERNAME: joi.string().min(1).required(),
+    FACTUS_PASSWORD: joi.string().min(1).required(),
+    FACTUS_BASE_URL: joi.string().min(1).required(),
   })
   .unknown(true);
 
@@ -61,4 +72,10 @@ export const envs = {
   dbPass: envVars.DB_PASS,
   dbHost: envVars.DB_HOST,
   dbPort: envVars.DB_PORT,
+
+  factusClientId: envVars.FACTUS_CLIENT_ID,
+  factusClientSecret: envVars.FACTUS_CLIENT_SECRET,
+  factusUsername: envVars.FACTUS_USERNAME,
+  factusPassword: envVars.FACTUS_PASSWORD,
+  factusBaseUrl: envVars.FACTUS_BASE_URL,
 };

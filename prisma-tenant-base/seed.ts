@@ -5,10 +5,15 @@ import {
   seedApplications,
   seedResources,
   seedActions,
+  seedItems,
   seedRoles,
   seedRoleActions,
   seedUserRoles,
   seedUserInfo,
+  seedCities,
+  seedCountries,
+  seedDepartments,
+  seedMeasurementUnits,
 } from './seed/';
 
 async function main() {
@@ -24,12 +29,17 @@ async function main() {
       },
     });
 
+    await seedCountries(prisma);
+    await seedDepartments(prisma);
+    await seedCities(prisma);
     await seedApplications(prisma);
     await seedResources(prisma);
     await seedActions(prisma);
+    await seedMeasurementUnits(prisma);
     await seedRoles(prisma);
     await seedRoleActions(prisma);
     await seedUserRoles(prisma);
+    await seedItems(prisma);
     await seedUserInfo(prisma);
 
     void prisma.$disconnect();
