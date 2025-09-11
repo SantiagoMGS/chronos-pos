@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@infrastructure/guards/jwt-auth.guard';
 import { ResponseInterceptor } from '@core/interceptores/response.interceptor';
@@ -7,6 +7,7 @@ import { CustomResponse } from '@core/decorators/custom.response.decorator';
 import { GetFactusTokenUseCase } from '@domain/use-cases/factus/get-factus-token.use-case';
 import { FactusTokenResponseDto } from './dtos/factus-token-response.dto';
 import { TestGetFactusUrlUseCase } from '@domain/use-cases/factus/test-get-factus-url.use-case';
+import { ValidateFactusBillUseCase } from '@domain/use-cases/factus/validate-factus-bill.use-case';
 
 @Controller('factus')
 @ApiTags('Factus')
@@ -18,6 +19,7 @@ export class FactusController {
   constructor(
     private readonly getFactusTokenUseCase: GetFactusTokenUseCase,
     private readonly testGetFactusUrlUseCase: TestGetFactusUrlUseCase,
+    private readonly validateFactusBillUseCase: ValidateFactusBillUseCase,
   ) {}
 
   @Get('token')
@@ -34,5 +36,13 @@ export class FactusController {
   @CustomResponse({ successMessage: 'Solicitud GET a Factus ejecutada correctamente' })
   async testGet(@Query('url') url: string): Promise<any> {
     return await this.testGetFactusUrlUseCase.execute(url);
+  }
+
+  @Post('bills')
+  @ApiOperation({ summary: 'Crear factura (En desarrollo)' })
+  @ApiOkResponse({ description: 'Respuesta de Factus', schema: { type: 'object' } })
+  @CustomResponse({ successMessage: 'Factura enviada a Factus correctamente' })
+  async createBill(@Body() payload: any): Promise<any> {
+    return await this.validateFactusBillUseCase.execute(payload);
   }
 }
