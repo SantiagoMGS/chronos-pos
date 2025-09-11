@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { FactusAuthRepository } from '@domain/repositories/factus/factus-auth.repository';
 import { FactusToken } from '@domain/entities/factus/factus-token.entity';
 import { envs } from '@core/config/envs';
+import axios from 'axios';
 
 @Injectable()
 export class FactusAuthDataSourceService implements FactusAuthRepository {
@@ -42,51 +43,46 @@ export class FactusAuthDataSourceService implements FactusAuthRepository {
   }
 
   private async requestNewToken(): Promise<FactusToken> {
-    const url = `${this.baseUrl}/oauth/token`;
+    try {
+      const url = `${this.baseUrl}/oauth/token`;
+      const body = new URLSearchParams({
+        grant_type: 'password',
+        client_id: envs.factusClientId,
+        client_secret: envs.factusClientSecret,
+        username: envs.factusUsername,
+        password: envs.factusPassword,
+      });
 
-    const body = new URLSearchParams({
-      grant_type: 'password',
-      client_id: envs.factusClientId,
-      client_secret: envs.factusClientSecret,
-      username: envs.factusUsername,
-      password: envs.factusPassword,
-    });
+      const { data } = await axios.post<{
+        token_type: string;
+        expires_in: number;
+        access_token: string;
+        refresh_token: string;
+      }>(url, body.toString(), {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        timeout: 15000,
+      });
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body,
-    });
+      const mapped: FactusToken = {
+        tokenType: data.token_type,
+        expiresIn: data.expires_in,
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+      };
 
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      this.logger.error(`Error autenticando con Factus (${response.status}): ${errorText}`);
+      const safetySkewSeconds = 30;
+      const effectiveTtlSeconds = Math.max(0, (data.expires_in ?? 0) - safetySkewSeconds);
+      this.cachedToken = mapped;
+      this.cachedTokenExpiresAtMs = Date.now() + effectiveTtlSeconds * 1000;
+
+      return mapped;
+    } catch (error) {
+      this.logger.error('Error autenticando con Factus (password grant)');
       throw new InternalServerErrorException('No se pudo obtener el token de Factus');
     }
-
-    const data = (await response.json()) as {
-      token_type: string;
-      expires_in: number;
-      access_token: string;
-      refresh_token: string;
-    };
-
-    const mapped: FactusToken = {
-      tokenType: data.token_type,
-      expiresIn: data.expires_in,
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-    };
-
-    const safetySkewSeconds = 30;
-    const effectiveTtlSeconds = Math.max(0, (data.expires_in ?? 0) - safetySkewSeconds);
-    this.cachedToken = mapped;
-    this.cachedTokenExpiresAtMs = Date.now() + effectiveTtlSeconds * 1000;
-
-    return mapped;
   }
 
   private async requestRefreshToken(): Promise<FactusToken> {
@@ -94,49 +90,44 @@ export class FactusAuthDataSourceService implements FactusAuthRepository {
       throw new InternalServerErrorException('No hay refresh token disponible para Factus');
     }
 
-    const url = `${this.baseUrl}/oauth/token`;
+    try {
+      const url = `${this.baseUrl}/oauth/token`;
+      const body = new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: envs.factusClientId,
+        client_secret: envs.factusClientSecret,
+        refresh_token: this.cachedToken.refreshToken,
+      });
 
-    const body = new URLSearchParams({
-      grant_type: 'refresh_token',
-      client_id: envs.factusClientId,
-      client_secret: envs.factusClientSecret,
-      refresh_token: this.cachedToken.refreshToken,
-    });
+      const { data } = await axios.post<{
+        token_type: string;
+        expires_in: number;
+        access_token: string;
+        refresh_token: string;
+      }>(url, body.toString(), {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        timeout: 15000,
+      });
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body,
-    });
+      const mapped: FactusToken = {
+        tokenType: data.token_type,
+        expiresIn: data.expires_in,
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+      };
 
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      this.logger.error(`Error refrescando token de Factus (${response.status}): ${errorText}`);
+      const safetySkewSeconds = 30;
+      const effectiveTtlSeconds = Math.max(0, (data.expires_in ?? 0) - safetySkewSeconds);
+      this.cachedToken = mapped;
+      this.cachedTokenExpiresAtMs = Date.now() + effectiveTtlSeconds * 1000;
+
+      return mapped;
+    } catch (error) {
+      this.logger.error('Error refrescando token de Factus');
       throw new InternalServerErrorException('No se pudo refrescar el token de Factus');
     }
-
-    const data = (await response.json()) as {
-      token_type: string;
-      expires_in: number;
-      access_token: string;
-      refresh_token: string;
-    };
-
-    const mapped: FactusToken = {
-      tokenType: data.token_type,
-      expiresIn: data.expires_in,
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-    };
-
-    const safetySkewSeconds = 30;
-    const effectiveTtlSeconds = Math.max(0, (data.expires_in ?? 0) - safetySkewSeconds);
-    this.cachedToken = mapped;
-    this.cachedTokenExpiresAtMs = Date.now() + effectiveTtlSeconds * 1000;
-
-    return mapped;
   }
 }
