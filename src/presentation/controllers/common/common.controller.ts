@@ -8,6 +8,8 @@ import { CustomResponse } from '../../../core/decorators/custom.response.decorat
 import { DocumentTypeOptionDto } from './dtos/document-type-option.dto';
 import { GetAllDepartmentsUseCase } from '@domain/use-cases/common/get-all-departments.use-case';
 import { GetCitiesUseCase } from '@domain/use-cases/common/get-cities.use-case';
+import { GetMeasurementUnitsUseCase } from '@domain/use-cases/common/get-measurement-units.use-case';
+import { MeasurementUnitDto } from './dtos/measurement-unit.dto';
 import { DepartmentOptionDto } from './dtos/department-option.dto';
 import { CityOptionDto } from './dtos/city-option.dto';
 
@@ -21,6 +23,7 @@ export class CommonController {
   constructor(
     private readonly getAllDepartmentsUseCase: GetAllDepartmentsUseCase,
     private readonly getCitiesUseCase: GetCitiesUseCase,
+    private readonly getMeasurementUnitsUseCase: GetMeasurementUnitsUseCase,
   ) {}
 
   @Get('document-types')
@@ -62,5 +65,14 @@ export class CommonController {
   async getCities(@Query('departmentId') departmentId?: string): Promise<CityOptionDto[]> {
     const cities = await this.getCitiesUseCase.execute(departmentId);
     return cities.map((c) => ({ value: c.id, label: c.name }));
+  }
+
+  @Get('measurement-units')
+  @ApiOperation({ summary: 'Obtener unidades de medida' })
+  @ApiOkResponse({ description: 'Lista de unidades de medida', ...getArrayResponseSchema(MeasurementUnitDto) })
+  @CustomResponse({ successMessage: 'Unidades de medida obtenidas correctamente' })
+  async getMeasurementUnits(): Promise<MeasurementUnitDto[]> {
+    const units = await this.getMeasurementUnitsUseCase.execute();
+    return units.map((u) => ({ id: u.id, name: u.name, code: u.code }));
   }
 }
