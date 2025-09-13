@@ -6,8 +6,10 @@ import { Item, ItemType } from '@domain/entities/item.entity';
 export interface CreateItemDto {
   name: string;
   code: string;
+  price: number;
   description?: string;
   itemType: ItemType;
+  measurementUnitId: string;
 }
 
 @Injectable()
@@ -23,9 +25,11 @@ export class CreateItemUseCase {
     const itemData = {
       name: createItemDto.name,
       code: createItemDto.code,
+      price: createItemDto.price,
       description: createItemDto.description || null,
       isActive: true,
       itemType: createItemDto.itemType,
+      measurementUnitId: createItemDto.measurementUnitId,
     };
 
     return await this.itemRepository.create(itemData);

@@ -8,7 +8,7 @@ export async function seedItems(prisma: PrismaClient) {
   for (const item of itemData) {
     await prisma.item.upsert({
       where: { code: item.code },
-      update: {},
+      update: { ...item, price: Number(item.price) },
       create: item,
     });
   }

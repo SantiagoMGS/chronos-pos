@@ -14,14 +14,17 @@ export class ItemDataSourceService implements ItemRepository {
       data: {
         name: item.name,
         code: item.code,
+        price: item.price,
         description: item.description,
         isActive: item.isActive,
         itemType: item.itemType,
+        measurementUnitId: item.measurementUnitId,
       },
     });
 
     return {
       ...createdItem,
+      price: Number(createdItem.price),
       itemType: createdItem.itemType as ItemType,
     };
   }
@@ -37,6 +40,7 @@ export class ItemDataSourceService implements ItemRepository {
 
     return {
       ...item,
+      price: Number(item.price),
       itemType: item.itemType as ItemType,
     };
   }
@@ -52,6 +56,7 @@ export class ItemDataSourceService implements ItemRepository {
 
     return {
       ...item,
+      price: Number((item as any).price),
       itemType: item.itemType as ItemType,
     };
   }
@@ -63,6 +68,7 @@ export class ItemDataSourceService implements ItemRepository {
 
     return items.map((item) => ({
       ...item,
+      price: Number(item.price),
       itemType: item.itemType as ItemType,
     }));
   }
@@ -75,6 +81,7 @@ export class ItemDataSourceService implements ItemRepository {
 
     return items.map((item) => ({
       ...item,
+      price: Number(item.price),
       itemType: item.itemType as ItemType,
     }));
   }
@@ -99,6 +106,7 @@ export class ItemDataSourceService implements ItemRepository {
 
     const mappedItems: Item[] = items.map((item) => ({
       ...item,
+      price: Number(item.price),
       itemType: item.itemType as ItemType,
     }));
 
@@ -115,6 +123,7 @@ export class ItemDataSourceService implements ItemRepository {
 
     return {
       ...updatedItem,
+      price: Number(updatedItem.price),
       itemType: updatedItem.itemType as ItemType,
     };
   }
@@ -133,6 +142,7 @@ export class ItemDataSourceService implements ItemRepository {
 
     return {
       ...updatedItem,
+      price: Number(updatedItem.price),
       itemType: updatedItem.itemType as ItemType,
     };
   }

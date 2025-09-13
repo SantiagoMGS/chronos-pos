@@ -71,7 +71,7 @@ export class AuthController {
   @Post('set-company')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Establecer compañía activa para el usuario' })
+  @ApiOperation({ summary: 'Establecer compañía' })
   @ApiBearerAuth()
   @ApiBody({
     type: SetCompanyDto,
@@ -96,7 +96,7 @@ export class AuthController {
   @Get('permissions')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: 'Obtener permisos del usuario para una compañía específica',
+    summary: 'Obtener permisos del usuario para una compañía establecida',
   })
   @ApiResponse({
     status: 200,

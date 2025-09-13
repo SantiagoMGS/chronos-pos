@@ -28,6 +28,20 @@ export class ItemResponseDto {
   description!: string | null;
 
   @ApiProperty({
+    description: 'Precio del item',
+    example: 1499.99,
+  })
+  price!: number;
+
+  @ApiProperty({
+    description: 'ID de la unidad de medida asociada',
+    example: '2f1a7b3c-9d4e-4a6b-8c21-1f2e3d4c5b6a',
+    nullable: true,
+    required: false,
+  })
+  measurementUnitId!: string;
+
+  @ApiProperty({
     description: 'Estado activo del item',
     example: true,
   })

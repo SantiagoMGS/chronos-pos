@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsBoolean, IsEnum, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsEnum, MaxLength, IsNumber, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ItemType } from '@domain/entities/item.entity';
 
@@ -32,6 +32,25 @@ export class UpdateItemDto {
   @IsString({ message: 'La descripción debe ser una cadena de texto' })
   @MaxLength(500, { message: 'La descripción no puede exceder 500 caracteres' })
   description?: string;
+
+  @ApiProperty({
+    description: 'Precio del item',
+    example: 2700000,
+    required: false,
+    type: Number,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'El precio debe ser un número' })
+  price?: number;
+
+  @ApiProperty({
+    description: 'ID de la unidad de medida asociada',
+    example: '2f1a7b3c-9d4e-4a6b-8c21-1f2e3d4c5b6a',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID('4', { message: 'measurementUnitId debe ser un UUID válido' })
+  measurementUnitId?: string;
 
   @ApiProperty({
     description: 'Estado activo del item',

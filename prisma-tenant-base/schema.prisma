@@ -99,7 +99,7 @@ model UserRole {
 model UserInfo {
   userId         String       @map("user_id") @db.Uuid
   name           String       @map("name")
-  documentType   DocumentType
+  documentType   DocumentType @map("document_type")
   documentNumber String       @map("document_number")
 
   @@id([userId])
@@ -150,11 +150,6 @@ model City {
   @@map("city")
 }
 
-enum ItemType {
-  PRODUCTO
-  SERVICIO
-}
-
 model MeasurementUnit {
   id   String @id @default(uuid()) @db.Uuid
   code String @unique @map("code")
@@ -165,18 +160,24 @@ model MeasurementUnit {
   @@map("measurement_unit")
 }
 
+enum ItemType {
+  PRODUCTO
+  SERVICIO
+}
+
 model Item {
   id          String   @id @default(uuid()) @db.Uuid
   name        String   @map("name")
   code        String   @unique @map("code")
+  price       Decimal  @map("price")
   description String?  @map("description")
   isActive    Boolean  @default(true) @map("is_active")
-  itemType    ItemType
+  itemType    ItemType @map("item_type")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  measurementUnitId String?          @map("measurement_unit_id") @db.Uuid
-  measurementUnit   MeasurementUnit? @relation(fields: [measurementUnitId], references: [id], onDelete: Restrict)
+  measurementUnitId String          @map("measurement_unit_id") @db.Uuid
+  measurementUnit   MeasurementUnit @relation(fields: [measurementUnitId], references: [id], onDelete: Restrict)
 
   @@map("item")
 }
@@ -184,7 +185,7 @@ model Item {
 model Customer {
   id             String       @id @default(uuid()) @db.Uuid
   name           String       @map("name")
-  documentType   DocumentType
+  documentType   DocumentType @map("document_type")
   documentNumber String       @unique @map("document_number")
 
   email       String  @map("email")

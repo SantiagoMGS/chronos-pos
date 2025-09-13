@@ -6,9 +6,11 @@ import { Item, ItemType } from '@domain/entities/item.entity';
 export interface UpdateItemDto {
   name?: string;
   code?: string;
+  price?: number;
   description?: string;
   isActive?: boolean;
   itemType?: ItemType;
+  measurementUnitId?: string;
 }
 
 @Injectable()
