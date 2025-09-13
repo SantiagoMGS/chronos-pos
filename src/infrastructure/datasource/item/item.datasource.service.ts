@@ -4,6 +4,7 @@ import { ItemRepository } from '@domain/repositories/item/item.repository';
 import { Item, ItemType } from '@domain/entities/item.entity';
 import { IPaginatedData, IPaginationOptions } from '@shared/types/pagination';
 import { normalizePagination, toPaginatedData } from '@shared/utils/pagination';
+import { Prisma } from '@prisma-tenant-base/tenant-database-client-types';
 
 @Injectable()
 export class ItemDataSourceService implements ItemRepository {
@@ -32,6 +33,7 @@ export class ItemDataSourceService implements ItemRepository {
   async findById(id: string): Promise<Item | null> {
     const item = await this.tenantPrisma.client.item.findUnique({
       where: { id },
+      include: { measurementUnit: { select: { id: true, name: true } } },
     });
 
     if (!item) {
@@ -42,12 +44,14 @@ export class ItemDataSourceService implements ItemRepository {
       ...item,
       price: Number(item.price),
       itemType: item.itemType as ItemType,
-    };
+      measurementUnit: item.measurementUnit,
+    } as unknown as Item;
   }
 
   async findByCode(code: string): Promise<Item | null> {
     const item = await this.tenantPrisma.client.item.findUnique({
       where: { code },
+      include: { measurementUnit: { select: { id: true, name: true } } },
     });
 
     if (!item) {
@@ -58,41 +62,14 @@ export class ItemDataSourceService implements ItemRepository {
       ...item,
       price: Number((item as any).price),
       itemType: item.itemType as ItemType,
-    };
-  }
-
-  async findAll(): Promise<Item[]> {
-    const items = await this.tenantPrisma.client.item.findMany({
-      orderBy: { name: 'asc' },
-    });
-
-    return items.map((item) => ({
-      ...item,
-      price: Number(item.price),
-      itemType: item.itemType as ItemType,
-    }));
-  }
-
-  async findActive(): Promise<Item[]> {
-    const items = await this.tenantPrisma.client.item.findMany({
-      where: { isActive: true },
-      orderBy: { name: 'asc' },
-    });
-
-    return items.map((item) => ({
-      ...item,
-      price: Number(item.price),
-      itemType: item.itemType as ItemType,
-    }));
+      measurementUnit: item.measurementUnit,
+    } as unknown as Item;
   }
 
   async findPaginated(options: IPaginationOptions): Promise<IPaginatedData<Item>> {
     const { page, limit, skip } = normalizePagination(options.page, options.limit);
 
-    const where: Record<string, unknown> = {};
-    if (!options.withDeleted) {
-      where.isActive = true;
-    }
+    const where: Prisma.ItemWhereInput = options.withDeleted ? {} : { isActive: true };
 
     const [items, total] = await this.tenantPrisma.client.$transaction([
       this.tenantPrisma.client.item.findMany({
@@ -100,6 +77,7 @@ export class ItemDataSourceService implements ItemRepository {
         skip,
         take: limit,
         orderBy: { name: 'asc' },
+        include: { measurementUnit: { select: { id: true, name: true } } },
       }),
       this.tenantPrisma.client.item.count({ where }),
     ]);
@@ -126,12 +104,6 @@ export class ItemDataSourceService implements ItemRepository {
       price: Number(updatedItem.price),
       itemType: updatedItem.itemType as ItemType,
     };
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.tenantPrisma.client.item.delete({
-      where: { id },
-    });
   }
 
   async softDelete(id: string): Promise<Item> {

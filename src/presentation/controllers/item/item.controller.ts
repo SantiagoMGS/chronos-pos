@@ -93,7 +93,22 @@ export class ItemController {
   })
   async findAll(@Query() query: QueryItemsDto) {
     const { page = 1, limit = 10, withDeleted } = query;
-    return await this.getAllItemsUseCase.execute({ page, limit, withDeleted });
+    const result = await this.getAllItemsUseCase.execute({ page, limit, withDeleted });
+    return {
+      ...result,
+      items: result.items.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        code: item.code,
+        description: item.description,
+        price: item.price,
+        isActive: item.isActive,
+        itemType: item.itemType,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        measurementUnit: item.measurementUnit,
+      })),
+    };
   }
 
   @Get(':id')
@@ -114,11 +129,24 @@ export class ItemController {
     successMessage: 'Item obtenido correctamente',
   })
   async findOne(@Param('id') id: string): Promise<ItemResponseDto> {
-    const item = await this.getItemUseCase.execute(id);
+    const item: any = await this.getItemUseCase.execute(id);
     if (!item) {
       throw new NotFoundException('Item no encontrado');
     }
-    return item;
+    return {
+      id: item.id,
+      name: item.name,
+      code: item.code,
+      description: item.description,
+      price: item.price,
+      isActive: item.isActive,
+      itemType: item.itemType,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      measurementUnit: item.measurementUnit
+        ? { id: item.measurementUnit.id, name: item.measurementUnit.name }
+        : undefined,
+    } as unknown as ItemResponseDto;
   }
 
   @Patch(':id')

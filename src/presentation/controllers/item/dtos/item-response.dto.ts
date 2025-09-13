@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ItemType } from '@domain/entities/item.entity';
+import { MeasurementUnitBasicDto } from '../../common/dtos/measurement-unit.dto';
 
 export class ItemResponseDto {
   @ApiProperty({
@@ -34,12 +35,11 @@ export class ItemResponseDto {
   price!: number;
 
   @ApiProperty({
-    description: 'ID de la unidad de medida asociada',
-    example: '2f1a7b3c-9d4e-4a6b-8c21-1f2e3d4c5b6a',
-    nullable: true,
+    description: 'Unidad de medida asociada (id y name)',
     required: false,
+    type: () => MeasurementUnitBasicDto,
   })
-  measurementUnitId!: string;
+  measurementUnit?: MeasurementUnitBasicDto;
 
   @ApiProperty({
     description: 'Estado activo del item',
